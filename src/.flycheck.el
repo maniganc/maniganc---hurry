@@ -1,1 +1,0 @@
-(setq flycheck-clang-include-path (list "/home/kaeipnos/dev/phelma/maniganc/src/core/include" "/home/kaeipnos/dev/phelma/maniganc/src/std/include" "/home/kaeipnos/dev/phelma/maniganc/src/debug/include" ))

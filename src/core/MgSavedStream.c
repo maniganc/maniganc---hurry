@@ -15,19 +15,40 @@ void MgSavedStream_init(MgSavedStream* s,
   s->current_char_idx = 0;
   s->mark_counter = 0;
 
-  int c = s->getchar(s->getchar_payload);
-  vector_char_push(&s->buffer, (char)c);
+  s->init = 0;
+
+
 }
 
 void MgSavedStream_deinit(MgSavedStream* s) {
   vector_char_deinit(&s->buffer);
 }
 
+void MgSavedStream_reset(MgSavedStream* s) {
+  vector_char_erase(&s->buffer);
+
+  s->buffer_char_flag = 0;
+  s->current_char_idx = 0;
+  s->mark_counter = 0;
+
+  s->init = 0;
+}
+
 int MgSavedStream_get_current(MgSavedStream* s) {
+  if (!s->init) {
+    s->init = 1;
+    int c = s->getchar(s->getchar_payload);
+    vector_char_push(&s->buffer, (char)c);
+  }
+  
   return vector_char_get_idx(&s->buffer, s->current_char_idx);
 }
 
 int MgSavedStream_get_next(MgSavedStream* s) {
+  if (!s->init) {
+    MgSavedStream_get_current(s);
+  }
+  
   if (s->buffer_char_flag) {
     /* buffer next chars */
     int last_char_idx = vector_char_get_size(&s->buffer) - 1;

@@ -12,9 +12,6 @@
 #define SSTR(x) #x
 #define STR(x) SSTR(x)
 
-/* char* test = "(#t 10029 :e- ()e-e() #\\A #\\newline #\\space fooo #\\a ) "; */
-char* test = "(#\\newliner #\\space)";
-
 int func_get_next_char(void* payload) {
   return getchar();
 }
@@ -30,16 +27,9 @@ const MgObjectParser* object_parsers[] = {
   NULL
 };
 
-int main(int argc, char *argv[]) {
-#ifdef DEBUG
-  puts("-- Build date: "STR(BUILD_INFO_DATE));
-  puts("-- Build commit: "STR(BUILD_INFO_COMMIT));
-#endif
-
+static void interactive(void) {
   MgObject* output_object;
   MgSavedStream ss;
-
-
   printf("$ ");
   MgSavedStream_init(&ss, func_get_next_char, NULL);
 
@@ -58,17 +48,34 @@ int main(int argc, char *argv[]) {
 
     MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object);
     if (s != Mg_ok) {
-      printf("error: %s\n", s->message);
-      stop = 1;
+      fprintf(stderr, "error: %s\n", s->message);
+      int ch; while ((ch = getchar()) != '\n' && ch != EOF);
+      MgSavedStream_reset(&ss);
     }
 
     else {
       printf("==> ");
       MgObject_represent(output_object, stdout);
+      MgObject_destroy(output_object); /* for now, object is useless */
     }
 
 
     printf("\n$ ");
   }
+}
+
+int main(int argc, char *argv[]) {
+#ifdef DEBUG
+  puts("-- Build date: "STR(BUILD_INFO_DATE));
+  puts("-- Build commit: "STR(BUILD_INFO_COMMIT));
+#endif
+
+  if (argc == 1) {
+    interactive();
+    return 0;
+  }
+
+  
+  
   return 0;
 }

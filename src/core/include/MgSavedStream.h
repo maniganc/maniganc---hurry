@@ -22,6 +22,8 @@ typedef struct {
 
   size_t mark_counter;
 
+  int init;
+
 }MgSavedStream;
 
 typedef size_t MgSavedStream_mark;
@@ -31,6 +33,8 @@ void MgSavedStream_init(MgSavedStream* s,
                         void* getchar_payload);
 
 void MgSavedStream_deinit(MgSavedStream* s);
+
+void MgSavedStream_reset(MgSavedStream* s);
 
 /**
  * get current char
