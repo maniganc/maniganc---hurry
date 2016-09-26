@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   MgSavedStream ss;
 
 
-  printf("==>");
+  printf("$ ");
   MgSavedStream_init(&ss, func_get_next_char, NULL);
 
   int stop = 0;
@@ -63,11 +63,12 @@ int main(int argc, char *argv[]) {
     }
 
     else {
+      printf("==> ");
       MgObject_represent(output_object, stdout);
     }
 
 
-    printf("\n==>");
+    printf("\n$ ");
   }
   return 0;
 }
