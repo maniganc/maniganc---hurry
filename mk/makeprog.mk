@@ -48,7 +48,8 @@ $$($(1)_BUILD_DIR_F)/$(1): $$($(1)_OBJS) $$($(1)_LIBS)
 $(1)_CFLAGS_F = $$($(1)_CFLAGS) \
                 $$($$($(1)_TARGET)_CFLAGS) \
                 $$(BUILD_INFO_CFLAGS) \
-                $$(addprefix -I,$$($(1)_C_INCLUDES))
+                $$(addprefix -I,$$($(1)_C_INCLUDES)) \
+                -DNAME="$(1)"
 # rule
 $$($(1)_OBJS):: $$($(1)_BUILD_DIR_F)/%.o:%.c
 	@mkdir -p $$(@D)/

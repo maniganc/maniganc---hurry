@@ -31,23 +31,43 @@ const MgObjectParser* object_parsers[] = {
 };
 
 int main(int argc, char *argv[]) {
-  printf("hello\n");
-  puts("Build date: "STR(BUILD_INFO_DATE));
-  puts("Build commit: "STR(BUILD_INFO_COMMIT));
+#ifdef DEBUG
+  puts("-- Build date: "STR(BUILD_INFO_DATE));
+  puts("-- Build commit: "STR(BUILD_INFO_COMMIT));
+#endif
 
   MgObject* output_object;
   MgSavedStream ss;
+
+
+  printf("==>");
   MgSavedStream_init(&ss, func_get_next_char, NULL);
-  MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object);
-  if (s != Mg_ok) {
-    printf("error: %s\n", s->message);
-    return -1;
-  }
-  else {
-    printf("valid!\n");
-    printf(">");
-    MgObject_represent(output_object, stdout);
-    printf("<");
+
+  int stop = 0;
+  while(!stop) {
+
+    if (MgSavedStream_get_current(&ss) == EOF) {
+      break;
+    }
+
+    MgParser_skip_sugar(&ss, NULL);
+
+    if (MgSavedStream_get_current(&ss) == EOF) {
+      break;
+    }
+
+    MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object);
+    if (s != Mg_ok) {
+      printf("error: %s\n", s->message);
+      stop = 1;
+    }
+
+    else {
+      MgObject_represent(output_object, stdout);
+    }
+
+
+    printf("\n==>");
   }
   return 0;
 }
