@@ -15,7 +15,6 @@ include ../mk/makeprog.mk
 include ../mk/build_info.mk
 
 
-
 # autocompletion with irony on emacs, using .clang_complete
 # + flycheck
 # + semantic
@@ -41,4 +40,3 @@ $(addprefix $(PAR_O)semantic-add-system-include \", $(addsuffix \"$(PAR_C)\n,$(a
 
 .PHONY: project.el
 
-#irony--compile-options	
