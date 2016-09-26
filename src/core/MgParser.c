@@ -121,30 +121,20 @@ MgStatus* MgParser_parse_object(MgSavedStream* ss,
 MgStatus* MgParser_check_symbol_ending(MgSavedStream* ss) {
   /* check if there is some whitespaces/paren after it,
    * thus not any other sympbols that tailgate it*/
-  int whitespaces_count = 0;
-  MgParser_skip_sugar(ss, &whitespaces_count);
 
-  if (whitespaces_count == 0) {
-    /* no sugar separators */
-    /* check if there are paren */
-    if (MgSavedStream_get_current(ss) == ')' ||
-	MgSavedStream_get_current(ss) == '(') {
-      /* ok then */
-      return Mg_ok;
-    }
-    /* check eof/zero */
-    if (MgSavedStream_get_current(ss) == '\0' ||
-	MgSavedStream_get_current(ss) == EOF ||
-	MgSavedStream_get_current(ss) == '\n') {
-      /* ok then */
-      return Mg_ok;
-    }
+  int c = MgSavedStream_get_current(ss);
 
-    else {
-      /* no sugar + no paren -> another symbol in the way */
-      return MgParser_error_syntax;
-    }
+  switch (c) {
+  case ')':
+  case '(':
+  case ' ':
+  case EOF:
+  case '\0':
+  case '\n':
+  case ';':
+    return Mg_ok;
+    
+  default:
+    return MgParser_error_syntax;
   }
-
-  return Mg_ok;
 }
