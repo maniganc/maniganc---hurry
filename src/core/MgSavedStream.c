@@ -5,19 +5,23 @@
 
 #define BUFFER_DEFAULT_INIT_SIZE 32
 
-void MgSavedStream_init(MgSavedStream* s,
-                        MgSavedStream_getchar_func getchar,
-                        void* getchar_payload) {
-  s->getchar = getchar;
-  s->getchar_payload = getchar_payload;
-  vector_char_init(&s->buffer);
+
+static void reset_static_vars(MgSavedStream* s) {
   s->buffer_char_flag = 0;
   s->current_char_idx = 0;
   s->mark_counter = 0;
 
   s->init = 0;
 
-
+  s->line_number = 1;
+};
+void MgSavedStream_init(MgSavedStream* s,
+                        MgSavedStream_getchar_func getchar,
+                        void* getchar_payload) {
+  reset_static_vars(s);  
+  s->getchar = getchar;
+  s->getchar_payload = getchar_payload;
+  vector_char_init(&s->buffer);
 }
 
 void MgSavedStream_deinit(MgSavedStream* s) {
@@ -25,13 +29,26 @@ void MgSavedStream_deinit(MgSavedStream* s) {
 }
 
 void MgSavedStream_reset(MgSavedStream* s) {
+  reset_static_vars(s);
   vector_char_erase(&s->buffer);
+}
 
-  s->buffer_char_flag = 0;
-  s->current_char_idx = 0;
-  s->mark_counter = 0;
+static void line_metric_update_when_next(MgSavedStream* s) {
+  int c = MgSavedStream_get_current(s);
+  if (c == '\n') {
+    s->line_number++;
+  }
+}
 
-  s->init = 0;
+static void line_metric_update_when_previous(MgSavedStream* s) {
+  int c = MgSavedStream_get_current(s);
+  if (c == '\n' && s->line_number > 0) {
+    s->line_number--;
+  }
+}
+
+size_t MgSavedStream_get_line_number(MgSavedStream* s) {
+  return s->line_number;
 }
 
 int MgSavedStream_get_current(MgSavedStream* s) {
@@ -40,7 +57,7 @@ int MgSavedStream_get_current(MgSavedStream* s) {
     int c = s->getchar(s->getchar_payload);
     vector_char_push(&s->buffer, (char)c);
   }
-  
+
   return vector_char_get_idx(&s->buffer, s->current_char_idx);
 }
 
@@ -48,10 +65,10 @@ int MgSavedStream_get_next(MgSavedStream* s) {
   if (!s->init) {
     MgSavedStream_get_current(s);
   }
-  
+
   if (s->buffer_char_flag) {
     /* buffer next chars */
-    int last_char_idx = vector_char_get_size(&s->buffer) - 1;
+    size_t last_char_idx = vector_char_get_size(&s->buffer) - 1;
     if (s->current_char_idx < last_char_idx) {
       /* still some char stored to be used as next char */
       s->current_char_idx++;
@@ -87,6 +104,7 @@ int MgSavedStream_get_next(MgSavedStream* s) {
     vector_char_set_idx(&s->buffer, 0, (char)c);
   }
 
+  line_metric_update_when_next(s);
   return MgSavedStream_get_current(s);
 }
 
@@ -100,6 +118,7 @@ int MgSavedStream_get_previous(MgSavedStream* s) {
 
     else {
       s->current_char_idx--;
+      line_metric_update_when_previous(s);
       return MgSavedStream_get_current(s);
     }
   }
@@ -112,13 +131,20 @@ int MgSavedStream_get_previous(MgSavedStream* s) {
 }
 
 MgSavedStream_mark MgSavedStream_mark_current(MgSavedStream* s) {
+  /* save next chars */
   s->buffer_char_flag = 1;
+
   s->mark_counter++;
-  return s->current_char_idx;
+  
+  MgSavedStream_mark m;
+  m.char_idx = s->current_char_idx;
+  m.line_number = s->line_number;
+  return m;
 }
 
 void MgSavedStream_load_mark(MgSavedStream* s, MgSavedStream_mark mark) {
-  s->current_char_idx = mark;
+  s->current_char_idx = mark.char_idx;
+  s->line_number = mark.line_number;
 }
 
 void MgSavedStream_drop_mark(MgSavedStream* s) {

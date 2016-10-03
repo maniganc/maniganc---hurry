@@ -24,9 +24,15 @@ typedef struct {
 
   int init;
 
+  /* line metrics */
+  size_t line_number;
+
 }MgSavedStream;
 
-typedef size_t MgSavedStream_mark;
+typedef struct {
+  size_t char_idx;
+  size_t line_number; 
+}MgSavedStream_mark;
 
 void MgSavedStream_init(MgSavedStream* s,
                         MgSavedStream_getchar_func getchar,
@@ -47,6 +53,8 @@ int MgSavedStream_get_current(MgSavedStream* s);
 int MgSavedStream_get_next(MgSavedStream* s);
 
 int MgSavedStream_get_previous(MgSavedStream* s);
+
+size_t MgSavedStream_get_line_number(MgSavedStream* s);
 
 MgSavedStream_mark MgSavedStream_mark_current(MgSavedStream*s);
 
