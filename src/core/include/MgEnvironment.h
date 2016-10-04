@@ -11,10 +11,10 @@ typedef MgList MgEnv;
 /**
  * create an environment.
  *
- * @param  
+ * @param  env output
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_create(void);
+MgStatus* MgEnv_create(MgEnv** env);
 
 
 /**
@@ -23,7 +23,7 @@ MgStatus* MgEnv_create(void);
  * @param  
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_destroy(void);
+MgStatus* MgEnv_destroy(MgEnv* env);
 
 
 /**
@@ -33,7 +33,9 @@ MgStatus* MgEnv_destroy(void);
  * @param identifier 
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_add_identifier(MgEnv* env, MgIdentifier* identifier);
+MgStatus* MgEnv_add_identifier(MgEnv** env,
+			       const MgIdentifier* identifier,
+			       const MgObject* binded_object);
 
 /**
  * find an identifier in an environment and return the associated object
@@ -42,8 +44,11 @@ MgStatus* MgEnv_add_identifier(MgEnv* env, MgIdentifier* identifier);
  * @param identifier 
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_get_object_from_identifier(MgEnv* env,
-					   MgIdentifier* identifier,
+MgStatus* MgEnv_get_object_from_identifier(const MgEnv* env,
+					   const MgIdentifier* identifier,
 					   MgObject** output_object);
+
+
+extern const MgStatus* MgEnv_error_identifier_not_found;
 
 #endif /* MGENVIRONMENT_H */

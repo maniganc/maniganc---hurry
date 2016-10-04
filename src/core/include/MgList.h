@@ -88,7 +88,8 @@ MgObject* MgList_get_cdr(MgList* list);
  * @param object
  * @return
  */
-MgStatus* MgList_push_front(MgList** list_head, MgObject* object);
+MgStatus* MgList_push_front(MgList** list_head,
+			    const MgObject* object);
 
 /**
  * insert an element at the end of a list.

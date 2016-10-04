@@ -243,7 +243,8 @@ MgObject* MgList_get_cdr(MgList* list) {
   return list->cdr;
 }
 
-MgStatus* MgList_push_front(MgList** list_head, MgObject* object) {
+MgStatus* MgList_push_front(MgList** list_head,
+			    const MgObject* object) {
   MgPair* new_front_pair = malloc(sizeof(MgPair));
   if (new_front_pair == NULL) {
     return Mg_error_malloc;

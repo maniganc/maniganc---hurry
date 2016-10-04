@@ -17,6 +17,6 @@ MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier, char* name)
 
 int Mg_is_an_identifier(MgObject* obj);
 
-const char* MgIdentifier_get_name(MgIdentifier* identifier);
+const char* MgIdentifier_get_name(const MgIdentifier* identifier);
 
 #endif /* MGIDENTIFIER_H */

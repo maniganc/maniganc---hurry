@@ -55,7 +55,7 @@ MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier, char* name)
   return Mg_ok;
 }
 
-const char* MgIdentifier_get_name(MgIdentifier* identifier) {
+const char* MgIdentifier_get_name(const MgIdentifier* identifier) {
   return identifier->name;
 }
 
