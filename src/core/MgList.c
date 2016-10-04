@@ -15,14 +15,45 @@ struct MgList { MgObject base;
 };
 
 static MgStatus* evaluate(MgList* list, MgObject** output) {
-  return Mg_error_not_implemented;
+  if (list == Mg_emptyList) {
+    *output = (MgObject*)list;
+    return Mg_ok;
+  }
+  /* car must be an applicable object */
+  MgObject* car = MgList_get_car(list);
+
+  /* evaluate car */
+  MgObject* car_evaluated;
+  MgStatus* s = MgObject_evaluate(car, &car_evaluated);
+
+  if (s != Mg_ok) {
+    /* evaluation failed */
+    return s;
+  }
+
+  MgObject* application_output;
+  s = MgObject_evaluate_on(car_evaluated,
+                           MgList_get_cdr(list),
+                           &application_output);
+
+  if (s != Mg_ok) {
+    /* application failed */
+    /* destroy car_evaluated if it is not the same as car, avoid double-free */
+    if (car != car_evaluated) {
+      MgObject_destroy(car_evaluated);
+    }
+    return s;
+  }
+
+  *output = application_output;
+  return Mg_ok;
 }
 
 
 static MgStatus* evaluate_on(MgList* list,
                              MgObject* target,
                              MgObject** output) {
-  return Mg_error_not_implemented;
+  return Mg_error_object_not_applicable;
 }
 
 static MgStatus* represent(MgList* list,

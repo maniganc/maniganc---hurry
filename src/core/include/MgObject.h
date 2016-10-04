@@ -50,7 +50,6 @@ struct MgObject {
  */
 MgStatus* MgObject_represent(MgObject* self, FILE* fs);
 
-
 /**
  * evaluate an object into another.
  *
@@ -59,6 +58,18 @@ MgStatus* MgObject_represent(MgObject* self, FILE* fs);
  * @return Mg_ok if no errors
  */
 MgStatus* MgObject_evaluate(MgObject* self, MgObject** output);
+
+/**
+ * apply an object on another object
+ *
+ * @param self 
+ * @param target 
+ * @param output 
+ * @return 
+ */
+MgStatus* MgObject_evaluate_on(MgObject* self,
+			       MgObject* target,
+			       MgObject** output);
 
 /**
  * destroy the object without checking its reference counter.
