@@ -89,7 +89,9 @@ static void interactive(void) {
       else {
         MgObject_represent(output_object, stdout);
         /* for now, evaluated object is useless */
-        MgObject_destroy(evaluated_obj);
+	if (evaluated_obj != output_object) {
+	  MgObject_destroy(evaluated_obj);
+	}
       }
       MgObject_destroy(output_object); /* for now, object is useless */
     }
