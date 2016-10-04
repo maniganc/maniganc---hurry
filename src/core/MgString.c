@@ -11,9 +11,18 @@ struct MgString { MgObject base;
   char* str;
 };
 
+static MgStatus * evaluate(MgString * self, MgString ** output){
+  *output = self;
+  return Mg_ok;
+}
 
-static MgStatus* not_implemented_too_late(void) {
-  return Mg_error_not_implemented;
+static MgStatus* evaluate_on(MgString * self, MgString** output){
+  return Mg_error_object_not_applicable;
+}
+
+static MgStatus* represent(MgString* string, FILE* fs) {
+  fprintf(fs, "\"%s\"", string->str);
+  return Mg_ok;
 }
 
 static MgStatus* destroy(MgString* string) {
@@ -22,14 +31,9 @@ static MgStatus* destroy(MgString* string) {
   return Mg_ok;
 }
 
-static MgStatus* represent(MgString* string, FILE* fs) {
-  fprintf(fs, "\"%s\"", string->str);
-  return Mg_ok;
-}
-
 static const MgObjectType MgString_type = {
-  .evaluate = (MgObject_evaluate_func)not_implemented_too_late,
-  .evaluate_on = (MgObject_evaluate_on_func)not_implemented_too_late,
+  .evaluate = (MgObject_evaluate_func)evaluate,
+  .evaluate_on = (MgObject_evaluate_on_func)evaluate_on,
   .represent = (MgObject_represent_func)represent,
   .destroy = (MgObject_destroy_func)destroy
 };
