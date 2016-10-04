@@ -7,14 +7,13 @@ struct MgInteger { MgObject base;
   int value;
 };
 
-
-static MgStatus* not_implemented_too_late(void) {
-  return Mg_error_not_implemented;
+static MgStatus* evaluate(MgInteger* self, MgInteger** output) {
+  *output = self;
+  return Mg_ok;
 }
 
-static MgStatus* destroy(MgInteger* integer) {
-  free(integer);
-  return Mg_ok;
+static MgStatus* evaluate_on(MgInteger* self, MgInteger** output) {
+  return Mg_error_object_not_applicable;
 }
 
 static MgStatus* represent(MgInteger* integer, FILE* fs) {
@@ -22,9 +21,14 @@ static MgStatus* represent(MgInteger* integer, FILE* fs) {
   return Mg_ok;
 }
 
+static MgStatus* destroy(MgInteger* integer) {
+  free(integer);
+  return Mg_ok;
+}
+
 static const MgObjectType MgInteger_type = {
-  .evaluate = (MgObject_evaluate_func)not_implemented_too_late,
-  .evaluate_on = (MgObject_evaluate_on_func)not_implemented_too_late,
+  .evaluate = (MgObject_evaluate_func)evaluate,
+  .evaluate_on = (MgObject_evaluate_on_func)evaluate_on,
   .represent = (MgObject_represent_func)represent,
   .destroy = (MgObject_destroy_func)destroy
 };

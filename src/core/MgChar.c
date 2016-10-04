@@ -7,14 +7,13 @@ struct MgChar { MgObject base;
   char value;
 };
 
-
-static MgStatus* not_implemented_too_late(void) {
-  return Mg_error_not_implemented;
+static MgStatus* evaluate(MgChar* self, MgChar** output) {
+  *output = self;
+  return Mg_ok;
 }
 
-static MgStatus* destroy(MgChar* ch) {
-  free(ch);
-  return Mg_ok;
+static MgStatus* evaluate_on(MgChar* self, MgChar** output) {
+  return Mg_error_object_not_applicable;
 }
 
 static MgStatus* represent(MgChar* ch, FILE* fs) {
@@ -30,9 +29,14 @@ static MgStatus* represent(MgChar* ch, FILE* fs) {
   return Mg_ok;
 }
 
+static MgStatus* destroy(MgChar* ch) {
+  free(ch);
+  return Mg_ok;
+}
+
 static const MgObjectType MgChar_type = {
-  .evaluate = (MgObject_evaluate_func)not_implemented_too_late,
-  .evaluate_on = (MgObject_evaluate_on_func)not_implemented_too_late,
+    .evaluate = (MgObject_evaluate_func)evaluate,
+  .evaluate_on = (MgObject_evaluate_on_func)evaluate_on,
   .represent = (MgObject_represent_func)represent,
   .destroy = (MgObject_destroy_func)destroy
 };
