@@ -11,8 +11,13 @@ struct MgIdentifier { MgObject base;
   char* name;
 };
 
-static MgStatus* not_implemented_too_late(void) {
-  return Mg_error_not_implemented;
+static MgStatus* evaluate(MgIdentifier* self, MgIdentifier** output){
+  *output = self;
+  return Mg_ok;
+}
+
+static MgStatus* evaluate_on(MgIdentifier* self, MgIdentifier** output){
+  return Mg_error_object_not_applicable;
 }
 
 static MgStatus* destroy(MgIdentifier* identifier) {
@@ -27,8 +32,8 @@ static MgStatus* represent(MgIdentifier* identifier, FILE* fs) {
 }
 
 static const MgObjectType type = {
-  .evaluate = (MgObject_evaluate_func)not_implemented_too_late,
-  .evaluate_on = (MgObject_evaluate_on_func)not_implemented_too_late,
+  .evaluate = (MgObject_evaluate_func)evaluate,
+  .evaluate_on = (MgObject_evaluate_on_func)evaluate_on,
   .represent = (MgObject_represent_func)represent,
   .destroy = (MgObject_destroy_func)destroy
 };
