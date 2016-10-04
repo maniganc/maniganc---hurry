@@ -79,4 +79,6 @@ MgStatus* MgObject_drop(MgObject* obj);
 #define MG_OBJECT_ADD_REF(obj_ptr) (++((MgObject*)(obj_ptr))->refcnt)
 #define MG_OBJECT_DROP_REF(obj_ptr) MgObject_drop(MG_OBJECT(obj_ptr))
 
+extern const MgStatus* Mg_error_object_not_applicable;
+
 #endif /* MGOBJECT_H */

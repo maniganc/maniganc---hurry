@@ -21,3 +21,10 @@ MgStatus* MgObject_drop(MgObject* obj) {
   }
   return Mg_ok;
 }
+
+
+static const MgStatus error_object_not_applicable = {
+  .message = "object not applicable"
+};
+const MgStatus* Mg_error_object_not_applicable = &error_object_not_applicable;
+

@@ -2,30 +2,33 @@
 #include "MgBool.h"
 #include "debug.h"
 
-
 struct MgBool { MgObject base;
   const int value;
 };
 
-
-static MgStatus* not_implemented_too_late(void) {
-  return Mg_error_not_implemented;
-}
-
-static MgStatus* do_nothing(void) {
+static MgStatus* evaluate(MgBool* self, MgBool** output) {
+  *output = self;
   return Mg_ok;
 }
 
-static MgStatus* represent(MgBool* bool, FILE* fs) {
-  fprintf(fs, "%s", bool->value ? "#t" : "#f");
+static MgStatus* evaluate_on(MgBool* self, MgBool** output) {
+  return Mg_error_object_not_applicable;
+}
+
+static MgStatus* represent(MgBool* self, FILE* fs) {
+  fprintf(fs, "%s", self->value ? "#t" : "#f");
+  return Mg_ok;
+}
+
+static MgStatus* destroy(MgBool* self) {
   return Mg_ok;
 }
 
 static const MgObjectType MgBool_type = {
-  .evaluate = (MgObject_evaluate_func)not_implemented_too_late,
-  .evaluate_on = (MgObject_evaluate_on_func)not_implemented_too_late,
+  .evaluate = (MgObject_evaluate_func)evaluate,
+  .evaluate_on = (MgObject_evaluate_on_func)evaluate_on,
   .represent = (MgObject_represent_func)represent,
-  .destroy = (MgObject_destroy_func)do_nothing
+  .destroy = (MgObject_destroy_func)destroy
 };
 
 static MgBool _true = {
@@ -36,7 +39,6 @@ static MgBool _true = {
   .value = 1
 };
 MgBool* MgBool_true = &_true;
-
 static MgBool _false = {
   .base = {
     .refcnt = 0,
