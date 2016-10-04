@@ -1,4 +1,4 @@
-
+// Test
 #include "MgList.h"
 #include "MgQuote.h"
 #include <stdlib.h>
