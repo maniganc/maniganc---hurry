@@ -2,13 +2,10 @@
 target ?= debug
 TARGET_DEFAULT = $(target)
 
-PROGRAMS = maniganc test
+PROGRAMS = maniganc
 
 maniganc_C_SRCS = interactive.c $(wildcard core/*.c)
 maniganc_C_INCLUDES = core/include std/include debug/include
-
-test_C_SRCS = test.c core/vector_instanced.c
-test_C_INCLUDES = core/include std/include debug/include
 
 include ../mk/default_targets.mk
 include ../mk/makeprog.mk

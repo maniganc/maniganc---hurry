@@ -15,7 +15,8 @@ void THIS_METHOD_TEMPLATE(init)(THIS_CLASS_TEMPLATE* vector);
 			       
 void THIS_METHOD_TEMPLATE(resize)(THIS_CLASS_TEMPLATE* vector, size_t size);
 				 
-void THIS_METHOD_TEMPLATE(resize_max)(THIS_CLASS_TEMPLATE* vector, size_t size);
+void THIS_METHOD_TEMPLATE(resize_allocated)(THIS_CLASS_TEMPLATE* vector,
+					    size_t size);
 				     
 void THIS_METHOD_TEMPLATE(push)(THIS_CLASS_TEMPLATE* vector, TYPE el);
 			       

@@ -57,7 +57,9 @@ MgStatus* MgString_parser_func(MgSavedStream* ss,
                                const  MgObjectParser** object_parsers,
                                MgString** output_string) {
   /* do not create an objet yet : due to bad symbol ending,
-   * object would have to be freed if created */
+   * invalid objects would have to be freed if created */
+  static int string_cnt = 0;
+  
   vector_char temp_str;
   vector_char_init(&temp_str);
 
@@ -66,6 +68,7 @@ MgStatus* MgString_parser_func(MgSavedStream* ss,
     vector_char_deinit(&temp_str);
     return MgParser_error_syntax;
   }
+  
 
   MgSavedStream_get_next(ss);
   if (c < 0) {
@@ -75,24 +78,27 @@ MgStatus* MgString_parser_func(MgSavedStream* ss,
 
   do {
     c = MgSavedStream_get_current(ss);
+
     if (c == '\"') {
       /* end of string */
       c = MgSavedStream_get_next(ss);
       if (c < 0) {
-	vector_char_deinit(&temp_str);
+        vector_char_deinit(&temp_str);
         return MgParser_error_getchar;
       }
       break;
     }
+
     else if (c == '\\') {
       /* next char is special  */
       c = MgSavedStream_get_next(ss);
       if (c < 0) {
-	vector_char_deinit(&temp_str);
+        vector_char_deinit(&temp_str);
         return MgParser_error_getchar;
       }
       vector_char_push(&temp_str, c);
     }
+
     else {
       /* normal char */
       vector_char_push(&temp_str, c);

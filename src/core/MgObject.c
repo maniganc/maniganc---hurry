@@ -5,6 +5,12 @@ MgStatus* MgObject_represent(MgObject* self, FILE* fs) {
   return self->type->represent(self, fs);
 }
 
+
+MgStatus* MgObject_evaluate(MgObject* self, MgObject** output) {
+  return self->type->evaluate(self, output);
+}
+
+
 MgStatus* MgObject_destroy(MgObject* obj) {
   return obj->type->destroy(obj);
 }

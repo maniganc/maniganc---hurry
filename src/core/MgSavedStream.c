@@ -55,7 +55,7 @@ int MgSavedStream_get_current(MgSavedStream* s) {
   if (!s->init) {
     s->init = 1;
     int c = s->getchar(s->getchar_payload);
-    vector_char_push(&s->buffer, (char)c);
+    vector_char_push(&s->buffer, c);
   }
 
   return vector_char_get_idx(&s->buffer, s->current_char_idx);
@@ -63,7 +63,7 @@ int MgSavedStream_get_current(MgSavedStream* s) {
 
 int MgSavedStream_get_next(MgSavedStream* s) {
   if (!s->init) {
-    MgSavedStream_get_current(s);
+    return MgSavedStream_get_current(s);
   }
 
   if (s->buffer_char_flag) {

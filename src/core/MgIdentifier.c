@@ -66,6 +66,8 @@ MgStatus* MgIdentifier_parser_func(MgSavedStream* ss,
   vector_char temp_name;
   vector_char_init(&temp_name);
 
+  int begin = 1;
+
   do {
     int c = MgSavedStream_get_current(ss);
     if ( ('A' <= c && c <= 'Z') ||
@@ -87,8 +89,11 @@ MgStatus* MgIdentifier_parser_func(MgSavedStream* ss,
          c == '@' ||
          c == '^' ||
          c == '_' ||
-         c == '~') {
+         c == '~' ||
+	 (('0' <= c && c <= '9') && !begin) ) {
       vector_char_push(&temp_name, c);
+
+      begin = 0;
       
       c = MgSavedStream_get_next(ss);
       if (c < 0) {
