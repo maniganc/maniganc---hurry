@@ -88,8 +88,10 @@ static void interactive(void) {
       }
       else {
         MgObject_represent(output_object, stdout);
-        /* for now, evaluated object is useless */
+        /* for now, evaluated object is useless, delete it */
 	if (evaluated_obj != output_object) {
+	  /* evaluated object can be the same as output object
+	   * avoid double-free */
 	  MgObject_destroy(evaluated_obj);
 	}
       }
