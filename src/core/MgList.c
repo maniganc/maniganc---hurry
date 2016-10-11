@@ -235,16 +235,29 @@ int MgList_is_proper(MgList* list) {
   return 0;
 }
 
-MgObject* MgList_get_car(MgList* list) {
+MgObject* MgList_get_car(const MgList* list) {
   return list->car;
 }
 
-MgObject* MgList_get_cdr(MgList* list) {
+MgObject* MgList_get_cdr(const MgList* list) {
   return list->cdr;
 }
 
+MgStatus* MgList_set_cdr(MgList** list, MgObject* obj) {
+  if (MgList_is_empty(*list)) {
+    return Mg_error;
+  }
+  
+  /* drop current cdr */
+  MG_OBJECT_DROP_REF((*list)->cdr);
+  /* replace it */
+  (*list)->cdr = obj;
+  MG_OBJECT_ADD_REF(obj);
+  return Mg_ok;
+}
+
 MgStatus* MgList_push_front(MgList** list_head,
-			    const MgObject* object) {
+			    MgObject* object) {
   MgPair* new_front_pair = malloc(sizeof(MgPair));
   if (new_front_pair == NULL) {
     return Mg_error_malloc;

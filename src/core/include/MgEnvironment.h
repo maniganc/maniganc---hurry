@@ -34,8 +34,8 @@ MgStatus* MgEnv_destroy(MgEnv* env);
  * @return Mg_ok if ok
  */
 MgStatus* MgEnv_add_identifier(MgEnv** env,
-			       const MgIdentifier* identifier,
-			       const MgObject* binded_object);
+			       MgIdentifier* identifier,
+			       MgObject* binded_object);
 
 /**
  * find an identifier in an environment and return the associated object

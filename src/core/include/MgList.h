@@ -69,7 +69,7 @@ int MgList_is_proper(MgList* list);
  * @param list
  * @return car
  */
-MgObject* MgList_get_car(MgList* list);
+MgObject* MgList_get_car(const MgList* list);
 
 
 /**
@@ -78,8 +78,17 @@ MgObject* MgList_get_car(MgList* list);
  * @param list
  * @return
  */
-MgObject* MgList_get_cdr(MgList* list);
+MgObject* MgList_get_cdr(const MgList* list);
 
+
+/**
+ * set cdr of a list
+ *
+ * @param list 
+ * @param obj 
+ * @return 
+ */
+MgStatus* MgList_set_cdr(MgList** list, MgObject* obj);
 
 /**
  * insert an element at the beginnning of a list
@@ -89,7 +98,7 @@ MgObject* MgList_get_cdr(MgList* list);
  * @return
  */
 MgStatus* MgList_push_front(MgList** list_head,
-			    const MgObject* object);
+			    MgObject* object);
 
 /**
  * insert an element at the end of a list.

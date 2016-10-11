@@ -43,10 +43,10 @@ const MgObjectParser* object_parsers[] = {
 };
 
 static void interactive(void) {
-#ifdef DEBUG
-  puts("-- Build date: "STR(BUILD_INFO_DATE));
-  puts("-- Build commit: "STR(BUILD_INFO_COMMIT));
-#endif // DEBUG
+/* #ifdef DEBUG */
+/*   puts("-- Build date: "STR(BUILD_INFO_DATE)); */
+/*   puts("-- Build commit: "STR(BUILD_INFO_COMMIT)); */
+/* #endif // DEBUG */
   MgObject* output_object;
   MgSavedStream ss;
   printf("$ ");
