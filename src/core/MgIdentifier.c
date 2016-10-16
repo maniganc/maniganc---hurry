@@ -3,10 +3,6 @@
 #include "debug.h"
 #include <stdlib.h>
 
-/* MgSavedStream has those defs */
-/* #define TYPE */
-/* #include "vector_template.h" */
-
 struct MgIdentifier { MgObject base;
   char* name;
 };
@@ -21,9 +17,7 @@ static MgStatus* evaluate_on(MgIdentifier* self, MgIdentifier** output){
 }
 
 static MgStatus* destroy(MgIdentifier* identifier) {
-  free(identifier->name);
-  free(identifier);
-  return Mg_ok;
+  return MgIdentifier_destroy(identifier);
 }
 
 static MgStatus* represent(MgIdentifier* identifier, FILE* fs) {
@@ -40,7 +34,8 @@ static const MgObjectType type = {
 const MgObjectType* MgIdentifier_type = &type;
 
 
-MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier, char* name) {
+MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier,
+					  const char* name) {
   MgIdentifier* new_identifier = malloc(sizeof(MgIdentifier));
   if (new_identifier == NULL) {
     return Mg_error_malloc;
@@ -52,6 +47,12 @@ MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier, char* name)
 
   *identifier = new_identifier;
 
+  return Mg_ok;
+}
+
+MgStatus* MgIdentifier_destroy(MgIdentifier* identifier) {
+  free(identifier->name);
+  free(identifier);
   return Mg_ok;
 }
 

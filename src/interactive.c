@@ -31,16 +31,7 @@ int func_get_next_char(void* payload) {
   return getchar();
 }
 
-const MgObjectParser* object_parsers[] = {
-  &MgString_parser,
-  &MgList_parser,
-  &MgBool_parser,
-  &MgInteger_parser,
-  &MgIdentifier_parser,
-  &MgChar_parser,
-  &MgQuote_parser,
-  NULL
-};
+extern const MgObjectParser* object_parsers[];
 
 static void interactive(void) {
 /* #ifdef DEBUG */
@@ -143,7 +134,34 @@ static int parse_filestream(FILE* fs) {
   return 0;
 }
 
+#include "MgInterpreter.h"
+
 int main(int argc, char *argv[]) {
+  MgStatus* status;
+  
+  MgInterpreter* interpreter;
+  status = MgInterpreter_create(&interpreter);
+  if (status != Mg_ok) {
+    fprintf(stderr, "failed to create interpreter, error %s\n",
+	    status->message);
+    return -1;
+  }
+
+  /* MgObject_represent(MgInterpreter_get_symbol_environment(interpreter), stdout); */
+  /* MgPair* pair; */
+  /* MgEnv_find_bond_from_identifier(MgInterpreter_get_symbol_environment(interpreter), "__parsers__", &pair); */
+  /* MgObject_represent(pair, stdout); */
+
+  status = MgInterpreter_evaluate_stream(interpreter, stdin, 1);
+  if (status != Mg_ok) {
+    fprintf(stderr, "failed to evaluate stream, error %s\n",
+	    status->message);
+    return -1;
+  }
+
+  MgInterpreter_destroy(interpreter);
+  return 0;
+  
   if (argc == 1) {
     interactive();
     return 0;

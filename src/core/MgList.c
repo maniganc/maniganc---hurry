@@ -266,10 +266,10 @@ MgStatus* MgList_push_front(MgList** list_head,
   *new_front_pair = emptylist;
 
   new_front_pair->car = object;
-  MG_OBJECT_ADD_REF(object);
+  MgObject_add_reference((MgObject*)object);
 
   new_front_pair->cdr = MG_OBJECT(*list_head);
-  MG_OBJECT_ADD_REF(*list_head);
+  MgObject_add_reference((MgObject*)*list_head);
 
   *list_head = (MgList*)new_front_pair;
   return Mg_ok;
@@ -291,10 +291,10 @@ MgStatus* MgList_push_back(MgList** list_tail, MgObject* object) {
   *new_tail_pair = emptylist;
 
   (*list_tail)->cdr = (MgObject*)new_tail_pair;
-  MG_OBJECT_ADD_REF(new_tail_pair);
+  MgObject_add_reference((MgObject*)new_tail_pair);
 
   new_tail_pair->car = object;
-  MG_OBJECT_ADD_REF(object);
+  MgObject_add_reference((MgObject*)object);
 
   new_tail_pair->cdr = (MgObject*)Mg_emptyList;
   /* no need to increase empylist ref,
@@ -305,12 +305,13 @@ MgStatus* MgList_push_back(MgList** list_tail, MgObject* object) {
 }
 
 MgStatus* MgList_destroy(MgList* list) {
+  /* do not destroy the empty list */
   if (MgList_is_empty(list)) {
     return Mg_ok;
   }
 
-  MG_OBJECT_DROP_REF(list->car);
-  MG_OBJECT_DROP_REF(list->cdr);
+  MgObject_drop_reference((MgObject*)list->car);
+  MgObject_drop_reference((MgObject*)list->cdr);
 
   free(list);
 

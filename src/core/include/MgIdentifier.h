@@ -1,6 +1,7 @@
 #ifndef MGIDENTIFIER_H
 #define MGIDENTIFIER_H
 
+#include "MgSavedStream.h"
 #include "MgParser.h"
 
 typedef struct MgIdentifier MgIdentifier;
@@ -13,7 +14,10 @@ MgStatus* MgIdentifier_parser_func(MgSavedStream* ss,
 
 extern const MgObjectParser MgIdentifier_parser;
 
-MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier, char* name);
+MgStatus* MgIdentifier_create_from_string(MgIdentifier** identifier,
+					  const char* name);
+
+MgStatus* MgIdentifier_destroy(MgIdentifier* identifier);
 
 int Mg_is_an_identifier(MgObject* obj);
 

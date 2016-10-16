@@ -9,18 +9,19 @@
 typedef MgList MgEnv;
 
 /**
- * create an environment.
+ * create an environment on top of a parent environment
  *
  * @param  env output
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_create(MgEnv** env);
+MgStatus* MgEnv_create(MgEnv** env,
+                       MgEnv* parent_env);
 
 
 /**
  * destroy an environment.
  *
- * @param  
+ * @param
  * @return Mg_ok if ok
  */
 MgStatus* MgEnv_destroy(MgEnv* env);
@@ -29,24 +30,39 @@ MgStatus* MgEnv_destroy(MgEnv* env);
 /**
  * append environment with a new identifier
  *
- * @param env 
- * @param identifier 
+ * @param env
+ * @param identifier
  * @return Mg_ok if ok
  */
 MgStatus* MgEnv_add_identifier(MgEnv** env,
-			       MgIdentifier* identifier,
-			       MgObject* binded_object);
+                               MgIdentifier* identifier,
+                               MgObject* binded_object);
+
 
 /**
- * find an identifier in an environment and return the associated object
+ * append environment with a new string identifier
  *
  * @param env 
  * @param identifier 
+ * @param binded_object 
  * @return Mg_ok if ok
  */
-MgStatus* MgEnv_get_object_from_identifier(const MgEnv* env,
-					   const MgIdentifier* identifier,
-					   MgObject** output_object);
+MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
+                                           const char* identifier,
+                                           MgObject* binded_object);
+
+/**
+ * find an identifier in an environment and return the associated bond
+ * with the variable
+ *
+ * @param env
+ * @param identifier
+ * @param bond a pair (identifier, object)
+ * @return Mg_ok if found, MgEnv_error_identifier_not_found if not
+ */
+MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
+                                          const char* identifier,
+                                          MgPair** bond);
 
 
 extern const MgStatus* MgEnv_error_identifier_not_found;

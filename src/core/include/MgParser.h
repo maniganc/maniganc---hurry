@@ -2,7 +2,6 @@
 #define MGPARSER_H
 
 #include "MgObject.h"
-#include "MgStatus.h"
 #include "MgSavedStream.h"
 
 typedef struct MgObjectParser MgObjectParser;

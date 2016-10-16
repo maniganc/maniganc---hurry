@@ -20,7 +20,8 @@ typedef struct MgObject MgObject;
 typedef MgStatus* (*MgObject_evaluate_func)(MgObject* self,
                                             MgObject** output);
 
-typedef MgStatus* (*MgObject_evaluate_on_func)(MgObject* self,
+typedef MgStatus* (*MgObject_evaluate_on_func)(
+					       MgObject* self,
                                                MgObject* target,
                                                MgObject** output);
 
@@ -79,6 +80,22 @@ MgStatus* MgObject_evaluate_on(MgObject* self,
  */
 MgStatus* MgObject_destroy(MgObject* obj);
 
+/**
+ * reference an object
+ *
+ * @param obj 
+ * @return 
+ */
+MgStatus* MgObject_add_reference(MgObject* obj);
+
+/**
+ * dereference an object
+ * decrement reference counter and destroy object if it reaches zero
+ *
+ * @param obj 
+ * @return 
+ */
+MgStatus* MgObject_drop_reference(MgObject* obj);
 
 #define MG_OBJECT(obj_ptr) ((MgObject*)(obj_ptr))
 #define MG_OBJECTTYPE(obj_ptr) ((MgObjectType*)(obj_ptr))
@@ -88,7 +105,7 @@ MgStatus* MgObject_destroy(MgObject* obj);
 
 MgStatus* MgObject_drop(MgObject* obj);
 #define MG_OBJECT_ADD_REF(obj_ptr) (++((MgObject*)(obj_ptr))->refcnt)
-#define MG_OBJECT_DROP_REF(obj_ptr) MgObject_drop(MG_OBJECT(obj_ptr))
+#define MG_OBJECT_DROP_REF(obj_ptr) MgObject_drop_reference(MG_OBJECT(obj_ptr))
 
 extern const MgStatus* Mg_error_object_not_applicable;
 

@@ -19,10 +19,15 @@ MgStatus* MgObject_destroy(MgObject* obj) {
   return obj->type->destroy(obj);
 }
 
-MgStatus* MgObject_drop(MgObject* obj) {
+MgStatus* MgObject_drop_reference(MgObject* obj) {
   if (--obj->refcnt <= 0) {
     return MgObject_destroy(obj);
   }
+  return Mg_ok;
+}
+
+MgStatus* MgObject_add_reference(MgObject* obj) {
+  obj->refcnt++;
   return Mg_ok;
 }
 
