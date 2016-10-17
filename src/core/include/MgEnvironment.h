@@ -36,7 +36,8 @@ MgStatus* MgEnv_destroy(MgEnv* env);
  */
 MgStatus* MgEnv_add_identifier(MgEnv** env,
                                MgIdentifier* identifier,
-                               MgObject* binded_object);
+                               MgObject* binded_object,
+			       int scope_limited);
 
 
 /**
@@ -49,7 +50,8 @@ MgStatus* MgEnv_add_identifier(MgEnv** env,
  */
 MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
                                            const char* identifier,
-                                           MgObject* binded_object);
+                                           MgObject* binded_object,
+					   int scope_limited);
 
 /**
  * find an identifier in an environment and return the associated bond
@@ -57,12 +59,14 @@ MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
  *
  * @param env
  * @param identifier
+ * @param scope_limited limit scope to the current env
  * @param bond a pair (identifier, object)
  * @return Mg_ok if found, MgEnv_error_identifier_not_found if not
  */
 MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
                                           const char* identifier,
-                                          MgPair** bond);
+                                          MgPair** bond,
+					  int scope_limited);
 
 
 extern const MgStatus* MgEnv_error_identifier_not_found;

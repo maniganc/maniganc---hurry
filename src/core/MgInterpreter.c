@@ -30,15 +30,6 @@ struct MgInterpreter {
 #include "MgBuildInProcedure.h"
 #include "buildin_procedures.h"
 
-static MgStatus* hello(MgObject* arg,
-                       MgObject** output,
-                       MgInterpreter* interpreter,
-                       MgEnv* env) {
-  *output = arg;
-  printf("hello!\n");
-  return Mg_ok;
-};
-
 MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
   MgStatus* status;
 
@@ -58,27 +49,21 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
                         new_interpreter->emptylist); /* parent is the emptylist */
   if (status != Mg_ok) goto destroy_list_and_error;
 
-  /* MgEnv_add_identifier_from_string(&new_interpreter->symbol_env, */
-  /*                                  "__env__", */
-  /*                                  (MgObject*)new_interpreter->symbol_env); */
-
+  /* interpreter needs symbol env */
+  MgObject_add_reference((MgObject*)new_interpreter->symbol_env);
+  
   /* create parser list */
   MgList* parser_list;
   status = MgList_create(&parser_list);
   if (status != Mg_ok) goto destroy_env_and_more_and_error;
   /* add it to environment */
   MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
-                                   "__parsers__", (MgObject*)parser_list);
+                                   "__parsers__", (MgObject*)parser_list, 0);
 
   MgIdentifier* id;
   MgIdentifier_create_from_string(&id, "debug");
   MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
-                                   "__debug__", (MgObject*)id);
-
-  MgBuildInProcedure* proc;
-  MgBuildInProcedure_create(&proc, (MgBuildInProcedure_Func)hello);
-  MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
-                                   "__hello__", (MgObject*)proc);
+                                   "__debug__", (MgObject*)id, 0);
 
   /* load buildin procedures */
   const Mg_buildin_procedure* pair_proc_name = &Mg_buildin_procedure_array[0];
@@ -87,7 +72,7 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
     MgBuildInProcedure_create(&bproc, pair_proc_name->func);
     MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
                                      pair_proc_name->name,
-                                     (MgObject*)bproc);
+                                     (MgObject*)bproc, 0);
     pair_proc_name++;
   }
 
@@ -112,7 +97,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
                                          MgSavedStream* ss,
                                          int interactive_mode) {
 
-  printf("$ ");
+  if (interactive_mode) printf("$ ");
 
   while(1) {
     if (MgSavedStream_get_current(ss) == EOF) {
@@ -140,7 +125,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
     else {
       /* use output object */
       MgObject_add_reference(output_object);
-      printf("==> ");
+      if (interactive_mode) printf("==> ");
       /* MgObject_represent(output_object, stdout); */
       MgObject* evaluated_obj;
       s = MgObject_evaluate(output_object, &evaluated_obj,
@@ -156,7 +141,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
         /* use evaluated object */
         MgObject_add_reference(evaluated_obj);
         /* print it */
-        MgObject_represent(evaluated_obj, stdout);
+        if (interactive_mode) MgObject_represent(evaluated_obj, stdout);
         /* evaluated object is now useless, drop it */
         MgObject_drop_reference(evaluated_obj);
       }
@@ -165,7 +150,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
       MgObject_drop_reference(output_object);
     }
 
-    printf("\n$ ");
+    if (interactive_mode) printf("\n$ ");
   }
 
   return Mg_ok;

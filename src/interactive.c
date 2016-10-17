@@ -147,11 +147,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  /* MgObject_represent(MgInterpreter_get_symbol_environment(interpreter), stdout); */
-  /* MgPair* pair; */
-  /* MgEnv_find_bond_from_identifier(MgInterpreter_get_symbol_environment(interpreter), "__parsers__", &pair); */
-  /* MgObject_represent(pair, stdout); */
-
   status = MgInterpreter_evaluate_stream(interpreter, stdin, 1);
   if (status != Mg_ok) {
     fprintf(stderr, "failed to evaluate stream, error %s\n",

@@ -14,3 +14,8 @@ MG_BUILDIN_PROCEDURE(_refcnt, "_refcnt") {
   *output = i;
   return Mg_ok;
 }
+
+MG_BUILDIN_PROCEDURE(_env, "_env") {
+  *output = env;
+  return Mg_ok;
+}

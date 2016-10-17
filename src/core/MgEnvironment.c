@@ -26,14 +26,16 @@ MgStatus* MgEnv_destroy(MgEnv* env) {
 
 MgStatus* MgEnv_add_identifier(MgEnv** env,
                                MgIdentifier* identifier,
-                               MgObject* binded_object) {
+                               MgObject* binded_object,
+                               int scope_limited) {
   MgStatus* status;
 
   /* search if identifier already exists */
   MgPair* bond;
   status = MgEnv_find_bond_from_identifier(*env,
-					   MgIdentifier_get_name(identifier),
-					   &bond);
+                                           MgIdentifier_get_name(identifier),
+                                           &bond,
+                                           scope_limited);
   if (status == Mg_ok) {
     /* found, replace binded object */
     MgList_set_cdr(bond, binded_object);
@@ -65,17 +67,18 @@ MgStatus* MgEnv_add_identifier(MgEnv** env,
 
 MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
                                            const char* identifier,
-                                           MgObject* binded_object) {
+                                           MgObject* binded_object,
+                                           int scope_limited) {
   MgIdentifier* id;
   MgStatus* status;
   status = MgIdentifier_create_from_string(&id, identifier);
   if (status != Mg_ok) goto error;
 
-  status = MgEnv_add_identifier(env, id, binded_object);
+  status = MgEnv_add_identifier(env, id, binded_object, scope_limited);
   if (status != Mg_ok) goto destroy_id_and_error;
 
   return Mg_ok;
-  
+
  destroy_id_and_error:
   MgIdentifier_destroy(id);
  error:
@@ -85,7 +88,8 @@ MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
 
 MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
                                           const char* identifier,
-                                          MgPair** output_bond) {
+                                          MgPair** output_bond,
+                                          int scope_limited) {
   if (env == Mg_emptyList) {
     return MgEnv_error_identifier_not_found;
   }
@@ -113,10 +117,18 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
   }
   while(bond_list != Mg_emptyList);
 
+  /* nothing in the current env */
+  if (scope_limited) {
+    return MgEnv_error_identifier_not_found;
+  }
+  
   /* could not find the identifier in the current environment
    * search again in the parent env */
   MgEnv* parent_env = (MgEnv*)MgList_get_car(env);
-  return MgEnv_find_bond_from_identifier(parent_env, identifier, output_bond);
+  return MgEnv_find_bond_from_identifier(parent_env,
+					 identifier,
+					 output_bond,
+					 scope_limited);
 }
 
 const MgStatus error_identifier_not_found = {

@@ -16,7 +16,7 @@ static MgStatus* evaluate(MgIdentifier* self, MgObject** output,
   /* find associated object */
   MgPair* bond;
   MgStatus* s;
-  s = MgEnv_find_bond_from_identifier(env, MgIdentifier_get_name(self), &bond);
+  s = MgEnv_find_bond_from_identifier(env, MgIdentifier_get_name(self), &bond, 0);
   if (s != Mg_ok) goto error;
 
   MgObject* associated_object = MgList_get_cdr(bond);
