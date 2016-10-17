@@ -13,5 +13,8 @@ MG_BUILDIN_PROCEDURE(pp, "pp") {
   
   MgObject_represent(MgList_get_car((MgList*)arg), stdout);
   fprintf(stdout, "\n");
+
+  *output = MgList_get_car((MgList*)arg);
+  
   return Mg_ok;
 }

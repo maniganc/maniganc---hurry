@@ -89,7 +89,8 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 
 MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
   MgList_destroy(interpreter->emptylist);
-  MgEnv_destroy(interpreter->symbol_env);
+  MgObject_drop_reference((MgObject*)interpreter->symbol_env);
+  free(interpreter);
   return Mg_ok;
 }
 

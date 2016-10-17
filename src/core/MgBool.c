@@ -53,11 +53,11 @@ int Mg_is_a_bool(MgObject* obj) {
 }
 
 int Mg_is_true(MgObject* obj) {
-  return obj == (MgObject*)MgBool_true ? 1 : 0;
+  return !Mg_is_false(obj);
 }
 
 int Mg_is_false(MgObject* obj) {
-  return !Mg_is_true(obj);
+  return obj == (MgObject*)MgBool_false ? 1 : 0;
 }
 
 MgStatus* MgBool_parser_func(MgSavedStream* ss,

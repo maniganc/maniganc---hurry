@@ -41,7 +41,7 @@ MG_BUILDIN_PROCEDURE(define, "define") {
   MgObject_add_reference(obj_eval);
 
   /* add a bond between the two of them in the current env */
-  status =  MgEnv_add_identifier(&env, id, obj_eval, 1);
+  status =  MgEnv_add_identifier(&env, id, obj_eval, 1/* limit scope*/);
   if (status != Mg_ok) goto drop_and_error;
 
   /* now obj_eval is useless here */
