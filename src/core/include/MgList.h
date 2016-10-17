@@ -88,7 +88,7 @@ MgObject* MgList_get_cdr(const MgList* list);
  * @param obj 
  * @return 
  */
-MgStatus* MgList_set_cdr(MgList** list, MgObject* obj);
+MgStatus* MgList_set_cdr(MgList* list, MgObject* obj);
 
 /**
  * insert an element at the beginnning of a list

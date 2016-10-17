@@ -81,19 +81,3 @@ void THIS_METHOD_TEMPLATE(deinit)(THIS_CLASS_TEMPLATE* vector) {
     free(vector->data_begin);
   }
 }
-
-void THIS_METHOD_TEMPLATE(print)
-     (THIS_CLASS_TEMPLATE* vector,
-      void (*FUNC_TEMPLATE(print, TYPE))(TYPE el)) {
-  TYPE* iter = vector->data_begin;
-  TYPE* iter_end = vector->data_end_used;
-  printf("size used = %ld\n", vector->data_end_used - vector->data_begin);
-  printf("size allocated = %ld\n", vector->data_end_allocated - vector->data_begin);
-  int cnt = 0;
-  while ( iter != iter_end ) {
-    printf("[%d] = ",cnt++);
-    FUNC_TEMPLATE(print, TYPE)(*iter);
-    printf("\n");
-    iter++;
-  }
-}

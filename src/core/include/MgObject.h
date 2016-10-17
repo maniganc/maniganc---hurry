@@ -17,13 +17,21 @@ typedef size_t Mg_size_t;
 
 typedef struct MgObject MgObject;
 
-typedef MgStatus* (*MgObject_evaluate_func)(MgObject* self,
-                                            MgObject** output);
+/* forward declaration to avoid dependencies circles */
+typedef struct MgInterpreter MgInterpreter;
+typedef struct MgList MgList;
+typedef MgList MgEnv;
 
-typedef MgStatus* (*MgObject_evaluate_on_func)(
-					       MgObject* self,
+typedef MgStatus* (*MgObject_evaluate_func)(MgObject* self,
+                                            MgObject** output,
+                                            MgInterpreter* interpreter,
+                                            MgEnv* env);
+
+typedef MgStatus* (*MgObject_evaluate_on_func)(MgObject* self,
                                                MgObject* target,
-                                               MgObject** output);
+                                               MgObject** output,
+                                               MgInterpreter* interpreter,
+                                               MgEnv* env);
 
 typedef MgStatus* (*MgObject_represent_func)(MgObject* self,
                                              FILE* fs);
@@ -45,7 +53,7 @@ struct MgObject {
 /**
  * print the representation of an object
  *
- * @param self 
+ * @param self
  * @param fs filestream to use
  * @return Mg_ok if no errors
  */
@@ -54,28 +62,32 @@ MgStatus* MgObject_represent(MgObject* self, FILE* fs);
 /**
  * evaluate an object into another.
  *
- * @param self 
- * @param output 
+ * @param self
+ * @param output
  * @return Mg_ok if no errors
  */
-MgStatus* MgObject_evaluate(MgObject* self, MgObject** output);
+MgStatus* MgObject_evaluate(MgObject* self, MgObject** output,
+                            MgInterpreter* interpreter,
+                            MgEnv* env);
 
 /**
  * apply an object on another object
  *
- * @param self 
- * @param target 
- * @param output 
- * @return 
+ * @param self
+ * @param target
+ * @param output
+ * @return
  */
 MgStatus* MgObject_evaluate_on(MgObject* self,
-			       MgObject* target,
-			       MgObject** output);
+                               MgObject* target,
+                               MgObject** output,
+                               MgInterpreter* interpreter,
+                               MgEnv* env);
 
 /**
  * destroy the object without checking its reference counter.
  *
- * @param obj 
+ * @param obj
  * @return Mg_ok if no errors
  */
 MgStatus* MgObject_destroy(MgObject* obj);
@@ -83,8 +95,8 @@ MgStatus* MgObject_destroy(MgObject* obj);
 /**
  * reference an object
  *
- * @param obj 
- * @return 
+ * @param obj
+ * @return
  */
 MgStatus* MgObject_add_reference(MgObject* obj);
 
@@ -92,8 +104,8 @@ MgStatus* MgObject_add_reference(MgObject* obj);
  * dereference an object
  * decrement reference counter and destroy object if it reaches zero
  *
- * @param obj 
- * @return 
+ * @param obj
+ * @return
  */
 MgStatus* MgObject_drop_reference(MgObject* obj);
 

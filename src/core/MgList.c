@@ -3,6 +3,9 @@
 #include "MgQuote.h"
 #include <stdlib.h>
 #include "debug.h"
+
+#include "MgInterpreter.h"
+
 static const MgStatus error_improper = {
   .message = "List is improper"
 };
@@ -14,8 +17,10 @@ struct MgList { MgObject base;
   MgObject* cdr;
 };
 
-static MgStatus* evaluate(MgList* list, MgObject** output) {
-  if (list == Mg_emptyList) {
+static MgStatus* evaluate(MgList* list, MgObject** output,
+			  MgInterpreter* interpreter,
+			  MgEnv* env) {
+  if (list == MgInterpreter_get_emptylist(interpreter)) {
     *output = (MgObject*)list;
     return Mg_ok;
   }
@@ -24,7 +29,9 @@ static MgStatus* evaluate(MgList* list, MgObject** output) {
 
   /* evaluate car */
   MgObject* car_evaluated;
-  MgStatus* s = MgObject_evaluate(car, &car_evaluated);
+  MgStatus* s = MgObject_evaluate(car, &car_evaluated,
+				  interpreter,
+				  env);
 
   if (s != Mg_ok) {
     /* evaluation failed */
@@ -34,7 +41,9 @@ static MgStatus* evaluate(MgList* list, MgObject** output) {
   MgObject* application_output;
   s = MgObject_evaluate_on(car_evaluated,
                            MgList_get_cdr(list),
-                           &application_output);
+                           &application_output,
+			   interpreter,
+			   env);
 
   if (s != Mg_ok) {
     /* application failed */
@@ -52,7 +61,9 @@ static MgStatus* evaluate(MgList* list, MgObject** output) {
 
 static MgStatus* evaluate_on(MgList* list,
                              MgObject* target,
-                             MgObject** output) {
+                             MgObject** output,
+			     MgInterpreter* interpreter,
+			     MgEnv* env) {
   return Mg_error_object_not_applicable;
 }
 
@@ -243,16 +254,18 @@ MgObject* MgList_get_cdr(const MgList* list) {
   return list->cdr;
 }
 
-MgStatus* MgList_set_cdr(MgList** list, MgObject* obj) {
-  if (MgList_is_empty(*list)) {
+MgStatus* MgList_set_cdr(MgList* list, MgObject* obj) {
+  if (MgList_is_empty(list)) {
     return Mg_error;
   }
   
   /* drop current cdr */
-  MG_OBJECT_DROP_REF((*list)->cdr);
+  MG_OBJECT_DROP_REF(list->cdr);
+  
   /* replace it */
-  (*list)->cdr = obj;
+  list->cdr = obj;
   MG_OBJECT_ADD_REF(obj);
+  
   return Mg_ok;
 }
 
@@ -264,6 +277,7 @@ MgStatus* MgList_push_front(MgList** list_head,
   }
 
   *new_front_pair = emptylist;
+  new_front_pair->base.refcnt = 0;
 
   new_front_pair->car = object;
   MgObject_add_reference((MgObject*)object);
@@ -289,6 +303,11 @@ MgStatus* MgList_push_back(MgList** list_tail, MgObject* object) {
     return Mg_error_malloc;
   }
   *new_tail_pair = emptylist;
+  new_tail_pair->base.refcnt = 0;
+
+  /* for debugging */
+  new_tail_pair->car = (MgObject*)Mg_emptyList;
+  new_tail_pair->cdr = (MgObject*)Mg_emptyList;
 
   (*list_tail)->cdr = (MgObject*)new_tail_pair;
   MgObject_add_reference((MgObject*)new_tail_pair);

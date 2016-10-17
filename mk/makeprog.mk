@@ -66,7 +66,7 @@ endef
 # generate build rules for each program
 $(foreach prog,$(PROGRAMS),$(eval $(call MAKEPROG_TEMPLATE,$(prog))))
 
-clean:
-	rm -f $(ALL_OBJS) $(ALL_PROGRAMS)
+clean: $(ALL_OBJS) $(ALL_PROGRAMS)
+	rm -f $^
 
 

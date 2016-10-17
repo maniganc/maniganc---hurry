@@ -29,8 +29,18 @@ MgStatus* MgEnv_add_identifier(MgEnv** env,
                                MgObject* binded_object) {
   MgStatus* status;
 
-  /* create a bond between the identifier and the binded object */
+  /* search if identifier already exists */
   MgPair* bond;
+  status = MgEnv_find_bond_from_identifier(*env,
+					   MgIdentifier_get_name(identifier),
+					   &bond);
+  if (status == Mg_ok) {
+    /* found, replace binded object */
+    MgList_set_cdr(bond, binded_object);
+    return Mg_ok;
+  }
+
+  /* create a bond between the identifier and the binded object */
   status = MgPair_create(&bond, (MgObject*)identifier, binded_object);
   if (status != Mg_ok) goto error;
 
@@ -42,7 +52,7 @@ MgStatus* MgEnv_add_identifier(MgEnv** env,
   if (status != Mg_ok) goto destroy_and_error;
 
   /* update bond list in env */
-  MgList_set_cdr(env, (MgObject*)env_bond_list);
+  MgList_set_cdr(*env, (MgObject*)env_bond_list);
 
   return Mg_ok;
 
@@ -83,6 +93,10 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
   const char* target_id_name = identifier;
 
   MgList* bond_list = (MgList*)MgList_get_cdr(env);
+
+  if (bond_list == Mg_emptyList) {
+    return MgEnv_error_identifier_not_found;
+  }
 
   do {
     MgList* bond = (MgList*)MgList_get_car((MgList*)bond_list);

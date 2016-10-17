@@ -4,36 +4,24 @@ TARGET_DEFAULT = $(target)
 
 PROGRAMS = maniganc
 
-maniganc_C_SRCS = interactive.c $(wildcard core/*.c)
-maniganc_C_INCLUDES = core/include std/include debug/include
+maniganc_BUILD_DIR=.build
+maniganc_C_SRCS = interactive.c $(wildcard core/*.c) 
+maniganc_C_SRCS += $(sort $(wildcard buildin/*.c) buildin/buildin_procedures.c)
+maniganc_C_INCLUDES = core/include std/include debug/include buildin
 
 include ../mk/default_targets.mk
 include ../mk/makeprog.mk
 include ../mk/build_info.mk
 
+# automatically make buildin procedure header
+$(maniganc_OBJS):: buildin/buildin_procedures.h
 
-# autocompletion with irony on emacs, using .clang_complete
-# + flycheck
-# + semantic
-CLANG_CFLAGS := $(addprefix -I, $(abspath $(maniganc_C_INCLUDES))) \
-                $($(maniganc_TARGET)_CFLAGS)
-PAR_O :=(
-PAR_C :=)
-project.el:
-	echo "(setq irony--compile-options \
-	(list \
-$(addsuffix "\"", $(addprefix "\"",$(CLANG_CFLAGS))) \
-	))" > project.el
+buildin/buildin_procedures.h: $(filter-out buildin/buildin_procedures.c,$(wildcard buildin/*.c))
+	make -C buildin
 
-	echo "(setq flycheck-clang-include-path \
-	(list \
-$(addsuffix "\"", $(addprefix "\"",$(abspath $(maniganc_C_INCLUDES)))) \
-	))" >> project.el
+clean-buildin:
+	make -C buildin clean
 
-	echo " \
-$(addprefix $(PAR_O)semantic-add-system-include \", $(addsuffix \"$(PAR_C)\n,$(abspath $(maniganc_C_INCLUDES)))) \
-	" >> project.el
+clean: clean-buildin
 
-
-.PHONY: project.el
 

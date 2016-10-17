@@ -3,13 +3,29 @@
 #include "debug.h"
 #include <stdlib.h>
 
+#include "MgInterpreter.h"
+#include "MgEnvironment.h"
+
 struct MgIdentifier { MgObject base;
   char* name;
 };
 
-static MgStatus* evaluate(MgIdentifier* self, MgIdentifier** output){
-  *output = self;
+static MgStatus* evaluate(MgIdentifier* self, MgObject** output,
+			  MgInterpreter* interpreter,
+			  MgEnv* env){
+  /* find associated object */
+  MgPair* bond;
+  MgStatus* s;
+  s = MgEnv_find_bond_from_identifier(env, MgIdentifier_get_name(self), &bond);
+  if (s != Mg_ok) goto error;
+
+  MgObject* associated_object = MgList_get_cdr(bond);
+  
+  *output = associated_object;
   return Mg_ok;
+
+ error:
+  return s;
 }
 
 static MgStatus* evaluate_on(MgIdentifier* self, MgIdentifier** output){

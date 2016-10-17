@@ -47,6 +47,8 @@ MgStatus* MgParser_parse(MgSavedStream* ss,
 /**
  * parse stream and output object. Each parser is tested until 
  * one successully parse an object.
+ * output_object is given to the caller, thus it has to drop it 
+ * after using it.
  *
  * @param ss 
  * @param object_parsers null terminated array of parsers pointers

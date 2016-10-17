@@ -13,7 +13,7 @@ MgStatus* MgPair_create(MgPair** pair,
   if (status != Mg_ok) goto destroy_and_error;
 
   /* replace cdr in list */
-  status = MgList_set_cdr(&list, cdr);
+  status = MgList_set_cdr(list, cdr);
   if (status != Mg_ok) goto destroy_and_error;
 
   *pair = list;

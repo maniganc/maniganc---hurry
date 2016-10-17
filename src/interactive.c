@@ -18,121 +18,121 @@
 /*   return getchar(); */
 /* } */
 
-static const char* in = "\"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz\"";
+/* static const char* in = "\"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz\""; */
 
-int func_get_next_char(void* payload) {
-  /* static size_t idx = 0; */
-  /* if (idx == 1302) { */
-  /*   debug("end\n"); */
-  /*   return ' '; */
-  /* } */
-  /* debug("send char in  stream %c\n", in[idx]); */
-  /* return in[idx++]; */
-  return getchar();
-}
+/* int func_get_next_char(void* payload) { */
+/*   /\* static size_t idx = 0; *\/ */
+/*   /\* if (idx == 1302) { *\/ */
+/*   /\*   debug("end\n"); *\/ */
+/*   /\*   return ' '; *\/ */
+/*   /\* } *\/ */
+/*   /\* debug("send char in  stream %c\n", in[idx]); *\/ */
+/*   /\* return in[idx++]; *\/ */
+/*   return getchar(); */
+/* } */
 
-extern const MgObjectParser* object_parsers[];
+/* extern const MgObjectParser* object_parsers[]; */
 
-static void interactive(void) {
+/* static void interactive(void) { */
+/* /\* #ifdef DEBUG *\/ */
+/* /\*   puts("-- Build date: "STR(BUILD_INFO_DATE)); *\/ */
+/* /\*   puts("-- Build commit: "STR(BUILD_INFO_COMMIT)); *\/ */
+/* /\* #endif // DEBUG *\/ */
+/*   MgObject* output_object; */
+/*   MgSavedStream ss; */
+/*   printf("$ "); */
+/*   MgSavedStream_init(&ss, func_get_next_char, NULL); */
+
+/*   while(1) { */
+/*     if (MgSavedStream_get_current(&ss) == EOF) { */
+/*       break; */
+/*     } */
+
+/*     MgParser_skip_sugar(&ss, NULL); */
+
+/*     if (MgSavedStream_get_current(&ss) == EOF) { */
+/*       break; */
+/*     } */
+
+/*     MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object); */
+/*     if (s != Mg_ok) { */
+/*       fprintf(stderr, "error at line %ld: %s\n", */
+/* 	      MgSavedStream_get_line_number(&ss), */
+/* 	      s->message); */
+
+/*       /\* flush stdin *\/ */
+/*       int ch; while ((ch = getchar()) != '\n' && ch != EOF); */
+/*       MgSavedStream_reset(&ss); */
+/*     } */
+
+/*     else { */
+/*       printf("==> "); */
 /* #ifdef DEBUG */
-/*   puts("-- Build date: "STR(BUILD_INFO_DATE)); */
-/*   puts("-- Build commit: "STR(BUILD_INFO_COMMIT)); */
+/*       MgObject_represent(output_object, stdout); */
 /* #endif // DEBUG */
-  MgObject* output_object;
-  MgSavedStream ss;
-  printf("$ ");
-  MgSavedStream_init(&ss, func_get_next_char, NULL);
+/*       MgObject* evaluated_obj; */
+/*       s = MgObject_evaluate(output_object, &evaluated_obj); */
+/*       if (s != Mg_ok) { */
+/*         /\* failed to represent output object *\/ */
+/*         fprintf(stderr, "error: %s\n", s->message); */
 
-  while(1) {
-    if (MgSavedStream_get_current(&ss) == EOF) {
-      break;
-    }
-
-    MgParser_skip_sugar(&ss, NULL);
-
-    if (MgSavedStream_get_current(&ss) == EOF) {
-      break;
-    }
-
-    MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object);
-    if (s != Mg_ok) {
-      fprintf(stderr, "error at line %ld: %s\n",
-	      MgSavedStream_get_line_number(&ss),
-	      s->message);
-
-      /* flush stdin */
-      int ch; while ((ch = getchar()) != '\n' && ch != EOF);
-      MgSavedStream_reset(&ss);
-    }
-
-    else {
-      printf("==> ");
-#ifdef DEBUG
-      MgObject_represent(output_object, stdout);
-#endif // DEBUG
-      MgObject* evaluated_obj;
-      s = MgObject_evaluate(output_object, &evaluated_obj);
-      if (s != Mg_ok) {
-        /* failed to represent output object */
-        fprintf(stderr, "error: %s\n", s->message);
-
-      }
-      else {
-        MgObject_represent(output_object, stdout);
-        /* for now, evaluated object is useless, delete it */
-	if (evaluated_obj != output_object) {
-	  /* evaluated object can be the same as output object
-	   * avoid double-free */
-	  MgObject_destroy(evaluated_obj);
-	}
-      }
-      MgObject_destroy(output_object); /* for now, object is useless */
-    }
+/*       } */
+/*       else { */
+/*         MgObject_represent(output_object, stdout); */
+/*         /\* for now, evaluated object is useless, delete it *\/ */
+/* 	if (evaluated_obj != output_object) { */
+/* 	  /\* evaluated object can be the same as output object */
+/* 	   * avoid double-free *\/ */
+/* 	  MgObject_destroy(evaluated_obj); */
+/* 	} */
+/*       } */
+/*       MgObject_destroy(output_object); /\* for now, object is useless *\/ */
+/*     } */
 
 
-    printf("\n$ ");
-  }
+/*     printf("\n$ "); */
+/*   } */
 
-  MgSavedStream_deinit(&ss);
-}
+/*   MgSavedStream_deinit(&ss); */
+/* } */
 
-static int parse_filestream(FILE* fs) {
-  MgSavedStream ss;
-  MgSavedStream_init(&ss, (MgSavedStream_getchar_func)fgetc, fs);
+/* static int parse_filestream(FILE* fs) { */
+/*   MgSavedStream ss; */
+/*   MgSavedStream_init(&ss, (MgSavedStream_getchar_func)fgetc, fs); */
 
-  MgObject* output_object;
+/*   MgObject* output_object; */
 
-  int stop = 0;
-  while(!stop) {
+/*   int stop = 0; */
+/*   while(!stop) { */
 
-    if (MgSavedStream_get_current(&ss) == EOF) {
-      break;
-    }
+/*     if (MgSavedStream_get_current(&ss) == EOF) { */
+/*       break; */
+/*     } */
 
-    MgParser_skip_sugar(&ss, NULL);
+/*     MgParser_skip_sugar(&ss, NULL); */
 
-    if (MgSavedStream_get_current(&ss) == EOF) {
-      break;
-    }
+/*     if (MgSavedStream_get_current(&ss) == EOF) { */
+/*       break; */
+/*     } */
 
-    MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object);
-    if (s != Mg_ok) {
-      fprintf(stderr, "error: %s\n", s->message);
-      MgSavedStream_deinit(&ss);
-      return -1;
-    }
+/*     MgStatus* s =  MgParser_parse_object(&ss, object_parsers, &output_object); */
+/*     if (s != Mg_ok) { */
+/*       fprintf(stderr, "error: %s\n", s->message); */
+/*       MgSavedStream_deinit(&ss); */
+/*       return -1; */
+/*     } */
 
-    else {
-      MgObject_represent(output_object, stdout);
-      printf("\n");                    /* separate representations */
-      MgObject_destroy(output_object); /* for now, object is useless
-                                        * no need to keep it in memory */
-    }
-  }
+/*     else { */
+/*       MgObject_represent(output_object, stdout); */
+/*       printf("\n");                    /\* separate representations *\/ */
+/*       MgObject_destroy(output_object); /\* for now, object is useless */
+/*                                         * no need to keep it in memory *\/ */
+/*     } */
+/*   } */
 
-  MgSavedStream_deinit(&ss);
-  return 0;
-}
+/*   MgSavedStream_deinit(&ss); */
+/*   return 0; */
+/* } */
 
 #include "MgInterpreter.h"
 

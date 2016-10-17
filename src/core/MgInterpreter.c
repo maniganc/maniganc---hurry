@@ -2,6 +2,8 @@
 #include "MgInterpreter.h"
 #include <stdlib.h>
 
+
+/* TODO: relocate that in __parsers__ list */
 #include "MgList.h"
 #include "MgBool.h"
 #include "MgInteger.h"
@@ -25,6 +27,18 @@ struct MgInterpreter {
   MgList* emptylist;
 };
 
+#include "MgBuildInProcedure.h"
+#include "buildin_procedures.h"
+
+static MgStatus* hello(MgObject* arg,
+                       MgObject** output,
+                       MgInterpreter* interpreter,
+                       MgEnv* env) {
+  *output = arg;
+  printf("hello!\n");
+  return Mg_ok;
+};
+
 MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
   MgStatus* status;
 
@@ -44,6 +58,10 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
                         new_interpreter->emptylist); /* parent is the emptylist */
   if (status != Mg_ok) goto destroy_list_and_error;
 
+  /* MgEnv_add_identifier_from_string(&new_interpreter->symbol_env, */
+  /*                                  "__env__", */
+  /*                                  (MgObject*)new_interpreter->symbol_env); */
+
   /* create parser list */
   MgList* parser_list;
   status = MgList_create(&parser_list);
@@ -51,6 +69,27 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
   /* add it to environment */
   MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
                                    "__parsers__", (MgObject*)parser_list);
+
+  MgIdentifier* id;
+  MgIdentifier_create_from_string(&id, "debug");
+  MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
+                                   "__debug__", (MgObject*)id);
+
+  MgBuildInProcedure* proc;
+  MgBuildInProcedure_create(&proc, (MgBuildInProcedure_Func)hello);
+  MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
+                                   "__hello__", (MgObject*)proc);
+
+  /* load buildin procedures */
+  const Mg_buildin_procedure* pair_proc_name = &Mg_buildin_procedure_array[0];
+  while (pair_proc_name->func != NULL) {
+    MgBuildInProcedure* bproc;
+    MgBuildInProcedure_create(&bproc, pair_proc_name->func);
+    MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
+                                     pair_proc_name->name,
+                                     (MgObject*)bproc);
+    pair_proc_name++;
+  }
 
   *interpreter = new_interpreter;
   return Mg_ok;
@@ -70,8 +109,9 @@ MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
 }
 
 MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
-                                        MgSavedStream* ss,
-                                        int interactive_mode) {
+                                         MgSavedStream* ss,
+                                         int interactive_mode) {
+
   printf("$ ");
 
   while(1) {
@@ -84,6 +124,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
     if (MgSavedStream_get_current(ss) == EOF) {
       break;
     }
+
     MgObject* output_object;
     MgStatus* s =  MgParser_parse_object(ss, object_parsers, &output_object);
     if (s != Mg_ok) {
@@ -97,29 +138,32 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
     }
 
     else {
+      /* use output object */
+      MgObject_add_reference(output_object);
       printf("==> ");
-#ifdef DEBUG
-      MgObject_represent(output_object, stdout);
-#endif // DEBUG
+      /* MgObject_represent(output_object, stdout); */
       MgObject* evaluated_obj;
-      s = MgObject_evaluate(output_object, &evaluated_obj);
+      s = MgObject_evaluate(output_object, &evaluated_obj,
+                            interpreter,
+                            MgInterpreter_get_symbol_environment(interpreter));
+
       if (s != Mg_ok) {
-        /* failed to represent output object */
+        /* failed to evaluate output object */
         fprintf(stderr, "error: %s\n", s->message);
-
       }
+
       else {
-        MgObject_represent(output_object, stdout);
-        /* for now, evaluated object is useless, delete it */
-        if (evaluated_obj != output_object) {
-          /* evaluated object can be the same as output object
-           * avoid double-free */
-          MgObject_destroy(evaluated_obj);
-        }
+        /* use evaluated object */
+        MgObject_add_reference(evaluated_obj);
+        /* print it */
+        MgObject_represent(evaluated_obj, stdout);
+        /* evaluated object is now useless, drop it */
+        MgObject_drop_reference(evaluated_obj);
       }
-      MgObject_destroy(output_object); /* for now, object is useless */
-    }
 
+      /* output object is now useless, drop it */
+      MgObject_drop_reference(output_object);
+    }
 
     printf("\n$ ");
   }
@@ -128,27 +172,31 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
 }
 
 MgStatus* MgInterpreter_evaluate_stream(MgInterpreter* interpreter,
-                                       FILE* fs,
-                                       int interactive_mode) {
+                                        FILE* fs,
+                                        int interactive_mode) {
   MgSavedStream ss;
   MgSavedStream_init(&ss, (MgSavedStream_getchar_func)getchar, NULL);
   MgStatus* status = MgInterpreter_evaluate_sstream(interpreter,
-						    &ss,
-						    interactive_mode);
+                                                    &ss,
+                                                    interactive_mode);
   MgSavedStream_deinit(&ss);
   return status;
 }
 
 MgStatus* MgInterpreter_evaluate_file(MgInterpreter* interpreter,
-                                     const char* filepath) {
+                                      const char* filepath) {
 
 }
 
 MgStatus* MgInterpreter_evaluate_string(MgInterpreter* interpreter,
-                                       const char* str) {
+                                        const char* str) {
 
 }
 
 MgEnv* MgInterpreter_get_symbol_environment(const MgInterpreter* interpreter) {
   return interpreter->symbol_env;
+}
+
+MgList* MgInterpreter_get_emptylist(const MgInterpreter* interpreter) {
+  return interpreter->emptylist;
 }

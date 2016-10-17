@@ -77,8 +77,6 @@ MgStatus* MgInterpreter_evaluate_string(MgInterpreter* interpreter,
  */
 MgEnv* MgInterpreter_get_symbol_environment(const MgInterpreter* interpreter);
 
-/* MgStatus* MgStdEnv_define(MgList* args, MgInterpreter* interpreter) { */
-
-/* } */
+MgList* MgInterpreter_get_emptylist(const MgInterpreter* interpreter);
 
 #endif /* MGINTERPRETER_H */
