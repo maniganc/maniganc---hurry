@@ -51,7 +51,7 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 
   /* interpreter needs symbol env */
   MgObject_add_reference((MgObject*)new_interpreter->symbol_env);
-  
+
   /* create parser list */
   MgList* parser_list;
   status = MgList_create(&parser_list);
@@ -96,7 +96,8 @@ MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
 
 MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
                                          MgSavedStream* ss,
-                                         int interactive_mode) {
+                                         int interactive_mode,
+                                         int parse_only_mode) {
 
   if (interactive_mode) printf("$ ");
 
@@ -126,26 +127,34 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
     else {
       /* use output object */
       MgObject_add_reference(output_object);
-      if (interactive_mode) printf("==> ");
-      /* MgObject_represent(output_object, stdout); */
-      MgObject* evaluated_obj;
-      s = MgObject_evaluate(output_object, &evaluated_obj,
-                            interpreter,
-                            MgInterpreter_get_symbol_environment(interpreter));
 
-      if (s != Mg_ok) {
-        /* failed to evaluate output object */
-        fprintf(stderr, "error: %s\n", s->message);
-      }
+      if (interactive_mode) printf("==> ");
+
+      if (parse_only_mode) {
+        MgObject_represent(output_object, stdout);
+	printf("\n");
+      } /* parse-only mode */
 
       else {
-        /* use evaluated object */
-        MgObject_add_reference(evaluated_obj);
-        /* print it */
-        if (interactive_mode) MgObject_represent(evaluated_obj, stdout);
-        /* evaluated object is now useless, drop it */
-        MgObject_drop_reference(evaluated_obj);
-      }
+        MgObject* evaluated_obj;
+        s = MgObject_evaluate(output_object, &evaluated_obj,
+                              interpreter,
+                              MgInterpreter_get_symbol_environment(interpreter));
+
+        if (s != Mg_ok) {
+          /* failed to evaluate output object */
+          fprintf(stderr, "error: %s\n", s->message);
+        }
+
+        else {
+          /* use evaluated object */
+          MgObject_add_reference(evaluated_obj);
+          /* print it */
+          if (interactive_mode) MgObject_represent(evaluated_obj, stdout);
+          /* evaluated object is now useless, drop it */
+          MgObject_drop_reference(evaluated_obj);
+        }
+      } /* evaluation mode */
 
       /* output object is now useless, drop it */
       MgObject_drop_reference(output_object);
@@ -159,12 +168,14 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
 
 MgStatus* MgInterpreter_evaluate_stream(MgInterpreter* interpreter,
                                         FILE* fs,
-                                        int interactive_mode) {
+                                        int interactive_mode,
+                                        int parse_only_mode) {
   MgSavedStream ss;
-  MgSavedStream_init(&ss, (MgSavedStream_getchar_func)getchar, NULL);
+  MgSavedStream_init(&ss, (MgSavedStream_getchar_func)fgetc, fs);
   MgStatus* status = MgInterpreter_evaluate_sstream(interpreter,
                                                     &ss,
-                                                    interactive_mode);
+                                                    interactive_mode,
+                                                    parse_only_mode);
   MgSavedStream_deinit(&ss);
   return status;
 }

@@ -33,7 +33,8 @@ MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter);
  */
 MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
                                          MgSavedStream* ss,
-                                         int interactive_mode);
+                                         int interactive_mode,
+                                         int parse_only_mode);
 
 /**
  * parse and run code from a filestream
@@ -45,8 +46,8 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
  */
 MgStatus* MgInterpreter_evaluate_stream(MgInterpreter* interpreter,
                                         FILE* fs,
-                                        int interactive_mode);
-
+                                        int interactive_mode,
+                                        int parse_only_mode);
 
 /**
  * parse and run code from a file
