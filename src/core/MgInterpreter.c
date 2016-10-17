@@ -143,7 +143,14 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
 
         if (s != Mg_ok) {
           /* failed to evaluate output object */
-          fprintf(stderr, "error: %s\n", s->message);
+	  fprintf(stderr, "error at line %ld: %s\n",
+              MgSavedStream_get_line_number(ss)-1,
+              s->message);
+	  if (!interactive_mode) {
+	    /* exit */
+	    MgObject_drop_reference(output_object);
+	    return s;
+	  }
         }
 
         else {
