@@ -12,9 +12,9 @@
                                          MgEnv* env)
 
 typedef struct Mg_procedure {
-  MgStatus* (*func)(MgObject* args,
+  MgStatus* (*func)(MgObject* arg,
                     MgObject** output,
-                    MgObject* interpreter,
+                    MgInterpreter* interpreter,
                     MgEnv* env);
   const char* name;
 }Mg_procedure;
