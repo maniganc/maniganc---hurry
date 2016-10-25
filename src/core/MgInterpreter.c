@@ -11,6 +11,7 @@
 #include "MgChar.h"
 #include "MgString.h"
 #include "MgQuote.h"
+
 const MgObjectParser* object_parsers[] = {
   &MgString_parser,
   &MgList_parser,
@@ -28,7 +29,10 @@ struct MgInterpreter {
 };
 
 #include "MgBuildInProcedure.h"
-#include "buildin_procedures.h"
+#include "buildin_procedures.h" /* Automatically generated header */
+
+#include "MgProcedure.h"
+#include "procedures.h" /* Automatically generated header */
 
 MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
   MgStatus* status;
@@ -74,6 +78,18 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
                                      pair_proc_name->name,
                                      (MgObject*)bproc, 0);
     pair_proc_name++;
+  }
+
+  /* load primitive procedures */
+  const Mg_procedure* pair_primitive_name = &Mg_procedure_array[0];
+    /* Loop until all of the primitives are loaded */
+  while(pair_primitive_name->func != NULL){
+    MgProcedure* pproc;
+    MgProcedure_create(&pproc, pair_primitive_name->func);
+    MgEnv_add_identifier_from_string(&new_interpreter->symbol_env,
+                                     pair_primitive_name->name,
+                                     (MgObject*)pproc, 0);
+    pair_primitive_name++; 
   }
 
   *interpreter = new_interpreter;
