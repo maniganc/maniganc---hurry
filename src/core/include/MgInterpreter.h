@@ -3,6 +3,7 @@
 
 #include "MgStatus.h"
 #include "MgEnvironment.h"
+#include "MgObjectReference.h"
 
 typedef struct MgInterpreter MgInterpreter;
 
@@ -79,5 +80,7 @@ MgStatus* MgInterpreter_evaluate_string(MgInterpreter* interpreter,
 MgEnv* MgInterpreter_get_symbol_environment(const MgInterpreter* interpreter);
 
 MgList* MgInterpreter_get_emptylist(const MgInterpreter* interpreter);
+
+MgObjectReference* MgInterpreter_get_reference(const MgInterpreter* interpreter);
 
 #endif /* MGINTERPRETER_H */

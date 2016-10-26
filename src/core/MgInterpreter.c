@@ -1,5 +1,8 @@
 
 #include "MgInterpreter.h"
+
+#include "MgObjectReference.h"
+
 #include <stdlib.h>
 
 
@@ -25,6 +28,13 @@ const MgObjectParser* object_parsers[] = {
 struct MgInterpreter {
   MgEnv* symbol_env;
   MgList* emptylist;
+
+  /* holds the reference to an object to evaluate
+   * ex: for tail-call optimisation.
+   * since code execution is linear, only one reference is needed for each
+   * interpreter.
+   */
+  MgObjectReference* object_reference;
 };
 
 #include "MgBuildInProcedure.h"
@@ -44,10 +54,14 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 
   /* TODO: what about true and false ? */
 
+  /* create object return reference */
+  status = MgObjectReference_create(&new_interpreter->object_reference);
+  if (status != Mg_ok) goto destroy_list_and_error;
+  
   /* create symbol environment */
   status = MgEnv_create(&new_interpreter->symbol_env,
                         new_interpreter->emptylist); /* parent is the emptylist */
-  if (status != Mg_ok) goto destroy_list_and_error;
+  if (status != Mg_ok) goto destroy_ref_and_more_and_error;
 
   /* interpreter needs symbol env */
   MgObject_add_reference((MgObject*)new_interpreter->symbol_env);
@@ -81,6 +95,8 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 
  destroy_env_and_more_and_error:
   MgEnv_destroy(new_interpreter->symbol_env);
+ destroy_ref_and_more_and_error:
+  MgObjectReference_destroy(new_interpreter->object_reference);
  destroy_list_and_error:
   MgList_destroy(new_interpreter->emptylist);
  error:
@@ -88,6 +104,7 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 }
 
 MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
+  MgObjectReference_destroy(interpreter->object_reference);
   MgList_destroy(interpreter->emptylist);
   MgObject_drop_reference((MgObject*)interpreter->symbol_env);
   free(interpreter);
@@ -132,7 +149,7 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
 
       if (parse_only_mode) {
         MgObject_represent(output_object, stdout);
-	printf("\n");
+        printf("\n");
       } /* parse-only mode */
 
       else {
@@ -143,14 +160,14 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
 
         if (s != Mg_ok) {
           /* failed to evaluate output object */
-	  fprintf(stderr, "error at line %ld: %s\n",
-              MgSavedStream_get_line_number(ss)-1,
-              s->message);
-	  if (!interactive_mode) {
-	    /* exit */
-	    MgObject_drop_reference(output_object);
-	    return s;
-	  }
+          fprintf(stderr, "error at line %ld: %s\n",
+                  MgSavedStream_get_line_number(ss)-1,
+                  s->message);
+          if (!interactive_mode) {
+            /* exit */
+            MgObject_drop_reference(output_object);
+            return s;
+          }
         }
 
         else {
@@ -203,4 +220,8 @@ MgEnv* MgInterpreter_get_symbol_environment(const MgInterpreter* interpreter) {
 
 MgList* MgInterpreter_get_emptylist(const MgInterpreter* interpreter) {
   return interpreter->emptylist;
+}
+
+MgObjectReference* MgInterpreter_get_reference(const MgInterpreter* interpreter) {
+  return interpreter->object_reference;
 }

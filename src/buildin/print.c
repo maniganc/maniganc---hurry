@@ -6,7 +6,7 @@
 #include "MgInterpreter.h"
 #include "MgInteger.h"
 
-MG_BUILDIN_PROCEDURE(pp, "pp") {
+MG_BUILDIN_PROCEDURE(pp, "write") {
   MgStatus* status;
   
   if ((MgList*)arg == MgInterpreter_get_emptylist(interpreter)) {

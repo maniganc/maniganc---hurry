@@ -61,6 +61,9 @@ MgStatus* MgObject_represent(MgObject* self, FILE* fs);
 
 /**
  * evaluate an object into another.
+ * the result of this evaluation cannot be a reference.
+ * this function evaluate reference objects until the evaluation
+ * is not a reference.
  *
  * @param self
  * @param output
