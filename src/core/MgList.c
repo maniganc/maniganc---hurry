@@ -18,8 +18,9 @@ struct MgList { MgObject base;
 };
 
 static MgStatus* evaluate(MgList* list, MgObject** output,
-			  MgInterpreter* interpreter,
-			  MgEnv* env) {
+                          MgInterpreter* interpreter,
+                          MgEnv* env) {
+  MgStatus* status;
   if (list == MgInterpreter_get_emptylist(interpreter)) {
     *output = (MgObject*)list;
     return Mg_ok;
@@ -29,41 +30,42 @@ static MgStatus* evaluate(MgList* list, MgObject** output,
 
   /* evaluate car */
   MgObject* car_evaluated;
-  MgStatus* s = MgObject_evaluate(car, &car_evaluated,
-				  interpreter,
-				  env);
+  status = MgObject_evaluate(car, &car_evaluated,
+                             interpreter,
+                             env);
+  if (status != Mg_ok) goto error;
 
-  if (s != Mg_ok) {
-    /* evaluation failed */
-    return s;
-  }
+  /* use car evaluation for a while */
+  MgObject_add_reference(car_evaluated);
 
+  /* evaluate car on cdr (args) */
   MgObject* application_output;
-  s = MgObject_evaluate_on(car_evaluated,
-                           MgList_get_cdr(list),
-                           &application_output,
-			   interpreter,
-			   env);
+  status = MgObject_evaluate_on(car_evaluated,
+                                MgList_get_cdr(list),
+                                &application_output,
+                                interpreter,
+                                env);
+  if (status != Mg_ok) goto drop_evaluate_and_error;
 
-  if (s != Mg_ok) {
-    /* application failed */
-    /* destroy car_evaluated if it is not the same as car, avoid double-free */
-    if (car != car_evaluated) {
-      MgObject_destroy(car_evaluated);
-    }
-    return s;
-  }
+  /* car evaluation is useless now */
+  MgObject_drop_reference(car_evaluated);
 
   *output = application_output;
   return Mg_ok;
+
+
+ drop_evaluate_and_error:
+  MgObject_drop_reference(car_evaluated);
+ error:
+  return status;
 }
 
 
 static MgStatus* evaluate_on(MgList* list,
                              MgObject* target,
                              MgObject** output,
-			     MgInterpreter* interpreter,
-			     MgEnv* env) {
+                             MgInterpreter* interpreter,
+                             MgEnv* env) {
   return Mg_error_object_not_applicable;
 }
 
@@ -258,19 +260,19 @@ MgStatus* MgList_set_cdr(MgList* list, MgObject* obj) {
   if (MgList_is_empty(list)) {
     return Mg_error;
   }
-  
+
   /* drop current cdr */
   MG_OBJECT_DROP_REF(list->cdr);
-  
+
   /* replace it */
   list->cdr = obj;
   MG_OBJECT_ADD_REF(obj);
-  
+
   return Mg_ok;
 }
 
 MgStatus* MgList_push_front(MgList** list_head,
-			    MgObject* object) {
+                            MgObject* object) {
   MgPair* new_front_pair = malloc(sizeof(MgPair));
   if (new_front_pair == NULL) {
     return Mg_error_malloc;
