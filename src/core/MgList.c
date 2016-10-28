@@ -140,6 +140,7 @@ MgList* Mg_emptyList = &emptylist;
 MgStatus* MgList_parser_func(MgSavedStream* ss,
                              const MgObjectParser** object_parsers,
                              MgList** output_list) {
+  MgStatus* status;
   /* a list must begin with an open bracket */
   int c = MgSavedStream_get_current(ss);
   if (c < 0) {
@@ -155,6 +156,11 @@ MgStatus* MgList_parser_func(MgSavedStream* ss,
   MgList* list_head;
   MgList_create(&list_head);
   MgList* list_tail = list_head;
+
+  /* 0 : continue to parse objects
+   * 1 : one last object to parse
+   * 2 : no remaining object to parse */
+  int last_object_to_parse = 0;
 
   /* go inside the bracket */
   MgSavedStream_get_next(ss);
@@ -180,31 +186,83 @@ MgStatus* MgList_parser_func(MgSavedStream* ss,
       MgSavedStream_get_next(ss);
     }
 
+    else if (c == '.') {
+      /* tail of an improper list */
+
+      if (last_object_to_parse != 0) {
+        /* one more points/objects */
+        /* err */
+        MgList_destroy(list_head);
+        return MgParser_error_syntax;
+      }
+
+      /* get past the point */
+      c = MgSavedStream_get_next(ss);
+      if (c < 0) {
+        /* err */
+        MgList_destroy(list_head);
+        return MgParser_error_getchar;
+      }
+
+      /* skip sugar */
+      MgParser_skip_sugar(ss, NULL);
+      c = MgSavedStream_get_current(ss);
+      if (c < 0) {
+        /* err */
+        MgList_destroy(list_head);
+        return MgParser_error_getchar;
+      }
+
+      /* next object is the last object to parse and must be the tail */
+      last_object_to_parse = 1;
+    }
+
     else {
       /* not the end, something else */
       /* must be an object, try to parse it */
       MgObject* obj;
-      MgStatus* s = MgParser_parse_object(ss, object_parsers, &obj);
+      status = MgParser_parse_object(ss, object_parsers, &obj);
 
-      if (s == Mg_ok) {
-        /* object successully parsed, append it to the list*/
-        MgList_push_back(&list_tail, obj);
-        if (MgList_is_empty(list_head)) {
-          /* at the beginning, list_head is empty.
-           * the first push_back creates a valid pair which should be the new
-           * head.
-           * the everything is pretty normal : list_head stays there while
-           * the tail falls in the darkness */
-          list_head = list_tail;
+      if (status == Mg_ok) {
+        if (last_object_to_parse == 0) {
+          /* object successully parsed, append it to the list*/
+          MgList_push_back(&list_tail, obj);
+          if (MgList_is_empty(list_head)) {
+            /* at the beginning, list_head is empty.
+             * the first push_back creates a valid pair which should be the new
+             * head.
+             * then everything is pretty normal : list_head stays there while
+             * the tail falls in the darkness */
+            list_head = list_tail;
+          }
+          /* skip sugar */
+          MgParser_skip_sugar(ss, NULL);
+
         }
-        /* skip sugar */
-        MgParser_skip_sugar(ss, NULL);
+
+        else if (last_object_to_parse == 1) {
+          /* last object to parse as tail */
+          MgList_set_cdr(list_tail, obj);
+
+          /* skip sugar */
+          MgParser_skip_sugar(ss, NULL);
+
+          /* no more object to parse */
+          last_object_to_parse = 2;
+        }
+
+        else {
+          /* err */
+          MgList_destroy(list_head);
+          return MgParser_error_syntax;
+        }
+
       }
 
       else {
         /* parsing failed */
         MgList_destroy(list_head);
-        return s;
+        return status;
       }
     }
   }
