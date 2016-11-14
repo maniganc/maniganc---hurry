@@ -2,6 +2,8 @@
 #include "MgObject.h"
 
 #include "MgInterpreter.h"
+#include "MgObjectReference.h"
+
 
 MgStatus* MgObject_represent(MgObject* self, FILE* fs) {
   return self->type->represent(self, fs);
@@ -10,9 +12,14 @@ MgStatus* MgObject_represent(MgObject* self, FILE* fs) {
 MgStatus* MgObject_evaluate(MgObject* self, MgObject** output,
                             MgInterpreter* interpreter,
                             MgEnv* env) {
-  return self->type->evaluate(self, output,
-                              interpreter,
-                              env);
+  MgStatus* s;
+  do {
+    s = self->type->evaluate(self, output,
+                             interpreter,
+                             env);
+    self = *output;
+  } while (Mg_is_a_reference(*output) && s == Mg_ok);
+  return s;
 }
 
 MgStatus* MgObject_evaluate_on(MgObject* self,
@@ -20,33 +27,33 @@ MgStatus* MgObject_evaluate_on(MgObject* self,
                                MgObject** output,
                                MgInterpreter* interpreter,
                                MgEnv* env) {
-  return self->type->evaluate_on(self, target, output,
-				 interpreter,
-				 env);
+  MgStatus* s;
+  s =  self->type->evaluate_on(self, target, output,
+                               interpreter,
+                               env);
+  if (s != Mg_ok) goto error;
+
+  if (Mg_is_a_reference(*output)) {
+    s = MgObject_evaluate(*output, output, interpreter, env);
+    if (s != Mg_ok) goto error;
+  }
+
+ error:
+  return s;
 }
 
 MgStatus* MgObject_destroy(MgObject* obj) {
-  /* printf("destroying object:"); */
-  /* MgObject_represent(obj, stdout); */
-  /* printf("\n"); */
   return obj->type->destroy(obj);
 }
 
 MgStatus* MgObject_drop_reference(MgObject* obj) {
-  /* printf("dropping object:"); */
-  /* if (obj) MgObject_represent(obj, stdout); else printf("NULL"); */
-  /* if (obj) printf("from %d\n", obj->refcnt); */
   if (--obj->refcnt <= 0) {
-    /* printf("destroying it\n"); */
     return MgObject_destroy(obj);
   }
   return Mg_ok;
 }
 
 MgStatus* MgObject_add_reference(MgObject* obj) {
-  /* printf("adding object:"); */
-  /* if (obj) MgObject_represent(obj, stdout); else printf("NULL"); */
-  /* if (obj) printf("from %d\n", obj->refcnt); */
   obj->refcnt++;
   return Mg_ok;
 }
