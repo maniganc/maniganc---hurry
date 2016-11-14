@@ -5,7 +5,6 @@
 #include "MgIdentifier.h"
 #include "MgInterpreter.h"
 #include "MgBool.h"
-#include "MgObjectReference.h"
 
 static const MgStatus error_params = {
   .message = "if require a conditional and two cases "
@@ -55,8 +54,6 @@ MG_BUILDIN_PROCEDURE(if, "if") {
   /* now cond_evaluated is useless */
   MgObject_drop_reference(cond_evaluated);
 
-  /* return a ref on the choosen case (tail call optimisation) */
-  return MgObjectReference_return_ref(case_to_evaluate,
-				      (MgObjectReference**)output,
-				      interpreter, env);
+  /* eval the choosen case */
+  return MgObject_evaluate(case_to_evaluate, output, interpreter, env);
 }
