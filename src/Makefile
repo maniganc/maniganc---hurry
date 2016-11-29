@@ -7,7 +7,7 @@ PROGRAMS = maniganc
 maniganc_BUILD_DIR=.build
 maniganc_C_SRCS = interactive.c $(wildcard core/*.c) 
 maniganc_C_SRCS += $(sort $(wildcard buildin/*.c) buildin/buildin_procedures.c)
-maniganc_C_INCLUDES = core/include std/include debug/include buildin
+maniganc_C_INCLUDES = core/include buildin lib/std/include lib/debug/include 
 
 include ../mk/default_targets.mk
 include ../mk/makeprog.mk
