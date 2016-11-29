@@ -11,7 +11,7 @@
 MG_BUILDIN_PROCEDURE(and, "and") {
   MgStatus* status;
 
-  /* check if there is no args */
+  /* check if there is no arg */
   if ((MgList*)arg == Mg_emptyList) {
     *output = (MgObject*)MgBool_false;
     return Mg_ok;
@@ -22,7 +22,6 @@ MG_BUILDIN_PROCEDURE(and, "and") {
   /* iterate over args */
   MgObject* obj;
   do {
-
     /* get next object */
     obj = MgList_get_car((MgList*)arg);
 
@@ -48,6 +47,12 @@ MG_BUILDIN_PROCEDURE(and, "and") {
       break;
     }
 
+    /* we used the object
+     * ensure that the object get cleaned if it have to */
+    MgObject_add_reference(obj_eval);    
+    MgObject_drop_reference(obj_eval);
+
+    /* next arg */
     arg = MgList_get_cdr((MgList*)arg);
   } while(1);
 

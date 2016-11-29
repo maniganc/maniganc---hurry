@@ -6,10 +6,10 @@
 ;; include directories
 (setq project:include-path
       (list
-       (string-join (list project:dir "core/include"))
-       (string-join (list project:dir "debug/include"))
-       (string-join (list project:dir "std/include"))
-       (string-join (list project:dir "buildin"))
+       (string-join (list project:dir "MgCore/include"))
+       (string-join (list project:dir "lib/debug/include"))
+       (string-join (list project:dir "lib/std/include"))
+       (string-join (list project:dir "MgStd"))
        ))
 
 ;; definitions
