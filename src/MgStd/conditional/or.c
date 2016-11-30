@@ -8,9 +8,7 @@
 #include "MgObjectReference.h"
 
 
-MG_BUILDIN_PROCEDURE(and, "and") {
-  MgStatus* status;
-
+MG_BUILDIN_PROCEDURE(or, "or") {
   /* check if there is no arg */
   if ((MgList*)arg == Mg_emptyList) {
     *output = (MgObject*)MgBool_false;
@@ -49,7 +47,7 @@ MG_BUILDIN_PROCEDURE(and, "and") {
 
     /* we used the object
      * ensure that the object get cleaned if it have to */
-    MgObject_add_reference(obj_eval);    
+    MgObject_add_reference(obj_eval);
     MgObject_drop_reference(obj_eval);
 
     /* next arg */
