@@ -1,0 +1,27 @@
+
+;; description: check gcc version
+;; command: scheme
+
+;;start command
+
+;; feed
+(define (lol)
+  (write "lol"))
+;; pause feed
+
+;; check
+;; feed
+(lol)
+;; pause feed
+
+;; against
+"lol"
+;; stop check
+
+;; stop feed
+
+;; stop command
+
+
+
+
