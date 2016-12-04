@@ -242,7 +242,7 @@ for test_filepath in args.test:
                     print final_header + term.color("expected success, but failed",
                                                     'bold', 'red')
                 else:
-                    print final_header + term.color("succeeded as expected",
+                    print final_header + term.color("passed as expected",
                                                     'bold', 'green')
                     test_counter_success += 1
             else:
@@ -262,7 +262,7 @@ for test_filepath in args.test:
         print header + term.color("%s no tests executed" % (fp), 'underline', 'yellow')
 
     elif test_counter == test_counter_success:
-        print header + term.color("%s all %s tests succeeded" % (fp, test_counter),
+        print header + term.color("%s all %s tests passed" % (fp, test_counter),
                                   'underline', 'green')
 
     elif test_counter != test_counter_success:
