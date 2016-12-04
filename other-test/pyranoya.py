@@ -192,7 +192,7 @@ for test_filepath in args.test:
             command_popen.stdin.close()
 
             time_begin = time.time() # time in seconds
-            while command_popen.poll() != 0 and not error_flag:
+            while command_popen.poll() == None and not error_flag:
                 curr_time = time.time()
 
                 # check timeout
@@ -272,6 +272,10 @@ for test_filepath in args.test:
                     print term.color("%s:%s %s - failed as expected"
                                      % (fp, line_number, description),
                                      'bold', 'green')
+
+            # cleanup
+            lines_to_feed = []
+            lines_to_check_against = []
                 
 
                 
