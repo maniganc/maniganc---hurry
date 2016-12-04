@@ -124,3 +124,45 @@
 
 
 
+;; description: eval, trivial eval test
+;; command expect success
+;; feed
+(eval '(write "p3x-492"))
+;; check
+"p3x-492"
+;; pause check
+;; run command
+
+
+;; description: eval, indirect eval
+;; command expect success
+;; feed
+(define expr '(write "hey"))
+(eval expr)
+;; check
+"hey"
+;; pause check
+;; run command
+
+
+;; description: eval, on current env (warning: rely on a debug function)
+;; command expect success
+;; feed
+(define expr '(write "hey"))
+(eval expr (_env))
+;; check
+"hey"
+;; pause check
+;; run command
+
+
+;; description: eval, on custom env
+;; command expect success
+;; feed
+(write (eval 'var '(() (var1 . 12) (varm . "tirlibibi") (var . "this") (e . 1) )))
+;; check
+"this"
+;; pause check
+;; run command
+
+

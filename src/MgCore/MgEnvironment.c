@@ -86,6 +86,11 @@ MgStatus* MgEnv_add_identifier_from_string(MgEnv** env,
 }
 
 
+const MgStatus error_invalid_environment = {
+  .message = "invalid environment"
+};
+
+
 MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
                                           const char* identifier,
                                           MgPair** output_bond,
@@ -104,7 +109,11 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
 
   do {
     MgList* bond = (MgList*)MgList_get_car((MgList*)bond_list);
+    if (!Mg_is_a_list((MgObject*)bond)) return &error_invalid_environment;
+    
     MgIdentifier* id = (MgIdentifier*)MgList_get_car(bond);
+    if (!Mg_is_an_identifier((MgObject*)id)) return &error_invalid_environment;
+    
     const char* id_name = MgIdentifier_get_name(id);
 
     if (strcmp(id_name, target_id_name) == 0) {

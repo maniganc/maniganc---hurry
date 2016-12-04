@@ -44,6 +44,10 @@ MgStatus* MgObjectReference_create(MgObjectReference** ref) {
 }
 
 MgStatus* MgObjectReference_destroy(MgObjectReference* ref) {
+  /* drop previous env & object */
+  if (ref->env) MgObject_drop_reference((MgObject*)ref->env);
+  if (ref->obj) MgObject_drop_reference((MgObject*)ref->obj);
+  
   free(ref);
   return Mg_ok;
 }
@@ -62,10 +66,18 @@ MgStatus* MgObjectReference_return_ref(MgObject* object,
 
   MgObjectReference* ref = MgInterpreter_get_reference(interpreter);
 
+  /* drop previous env & object */
+  if (ref->env) MgObject_drop_reference((MgObject*)ref->env);
+  if (ref->obj) MgObject_drop_reference((MgObject*)ref->obj);
+
   ref->obj = object;
   ref->env = env;
 
-  *object_ref = ref;
+  /* own new env & object */
+  MgObject_add_reference((MgObject*)object);
+  MgObject_add_reference((MgObject*)env);
 
+  *object_ref = ref;
+  
   return Mg_ok;
 }
