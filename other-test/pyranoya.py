@@ -204,7 +204,16 @@ for test_filepath in args.test:
 
                 # check output
                 output = command_popen.stdout.readlines()
-                if output != list(zip(*lines_to_check_against)[1]):
+                output_mispatch = 0
+                if lines_to_check_against == []:
+                    if output != []:
+                        output_mispatch = 1
+
+                else:
+                    if output != list(zip(*lines_to_check_against)[1]):
+                        output_mispatch = 1
+                        
+                if output_mispatch == 1:
                     if command_expect_success:
                         print term.color("%s:%s %s - error - unexpected output "
                                          % (fp, line_number, description),

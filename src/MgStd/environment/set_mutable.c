@@ -14,6 +14,11 @@ static const MgStatus error_no_object = {
   .message = "set! require an identifier and an object to bind"
 };
 
+
+static const MgStatus error_too_much_args = {
+  .message = "set! require only an identifier and an object to bind"
+};
+
 /* like define, but env search scope is not limited */
 MG_BUILDIN_PROCEDURE(set_mutable, "set!") {
   MgStatus* status;
@@ -34,6 +39,12 @@ MG_BUILDIN_PROCEDURE(set_mutable, "set!") {
   }
   
   MgObject* obj = MgList_get_car(obj_list);
+
+  
+  /* and cddar is () : not other argument is allowed */
+  if (MgList_get_cdr(obj_list) != (MgObject*)Mg_emptyList) {
+    return &error_too_much_args;
+  }
 
   /* evaluate it */
   MgObject* obj_eval;

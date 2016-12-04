@@ -13,6 +13,10 @@ static const MgStatus error_no_object = {
   .message = "define require an identifier and an object to bind"
 };
 
+static const MgStatus error_too_much_args = {
+  .message = "define require only an identifier and an object to bind"
+};
+
 MG_BUILDIN_PROCEDURE(define, "define") {
   MgStatus* status;
 
@@ -33,6 +37,11 @@ MG_BUILDIN_PROCEDURE(define, "define") {
   
   MgObject* obj = MgList_get_car(obj_list);
 
+  /* and cddar is () : not other argument is allowed */
+  if (MgList_get_cdr(obj_list) != (MgObject*)Mg_emptyList) {
+    return &error_too_much_args;
+  }
+  
   /* evaluate it */
   MgObject* obj_eval;
   status = MgObject_evaluate(obj, &obj_eval, interpreter, env);
