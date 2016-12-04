@@ -136,6 +136,11 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
               MgSavedStream_get_line_number(ss),
               s->message);
 
+      if (!interactive_mode) {
+            /* exit */
+            return s;
+      }
+      
       /* flush stdin */
       int ch; while ((ch = getchar()) != '\n' && ch != EOF);
       MgSavedStream_reset(ss);
