@@ -43,9 +43,19 @@ int main(int argc, char *argv[]) {
 
     case 'h':
     default:
-      printf("%s\n -p(--parse-only)\n -f(--execute_file)\n -i(--interactive)\n -h(--help)\n", argv[0]);
+      printf("%s\n -p(--parse-only)\n -f(--execute_file)\n -i(--interactive)\n -h(--help) [filepath]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
+  }
+
+  /* last argument that is not an option is a filename */
+  if (optind < argc) {
+    if (execute_file_flag == 1) {
+      fprintf(stderr, "file already specified with -f option\n");
+      exit(EXIT_FAILURE);
+    }
+    execute_file_flag = 1;
+    filename = strdup(argv[optind]);
   }
 
   MgStatus* status;
@@ -73,7 +83,10 @@ int main(int argc, char *argv[]) {
 
   /* fileexec */
   if (execute_file_flag) {
-    FILE* fs = fopen(filename, "rt");
+    FILE* fs = stdin;
+    if (strcmp(filename, "-") != 0) {
+      fs = fopen(filename, "rt");
+    }
     if (fs == NULL) {
       fprintf(stderr, "failed to open file %s\n",
               filename);
@@ -100,5 +113,5 @@ int main(int argc, char *argv[]) {
   free_filename_and_error:
   if (filename) free(filename);
   error:
-  return 1; 	   
+  return EXIT_FAILURE;
 }
