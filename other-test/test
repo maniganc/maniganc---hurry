@@ -1,26 +1,23 @@
 
-;; description: check gcc version
-;; command: scheme
+;; command: ../scheme -
+;; command timeout 1.0
+;; command expect success
 
-;;start command
-
+;; description: conditional - check or
 ;; feed
-(define (lol)
-  (write "lol"))
-;; pause feed
-
+(write (or))
+(write (or 2))
+(write (or "bar" 2 3 "foo"))
+(write (or #f 3))
+(write (or #f #f))
 ;; check
-;; feed
-(lol)
-;; pause feed
-
-;; against
-"lol"
-;; stop check
-
-;; stop feed
-
-;; stop command
+#f
+2
+"bar"
+3
+#f
+;; pause check
+;; run command
 
 
 
