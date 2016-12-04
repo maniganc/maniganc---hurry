@@ -1,0 +1,24 @@
+
+;; command: ../scheme -
+;; command timeout 1.0
+;; command expect success
+
+;; description: conditional - check or
+;; feed
+(write (or))
+(write (or 2))
+(write (or "bar" 2 3 "foo"))
+(write (or #f 3))
+(write (or #f #f))
+;; check
+#f
+2
+"bar"
+3
+#f
+;; pause check
+;; run command
+
+
+
+
