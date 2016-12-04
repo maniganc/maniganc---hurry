@@ -61,36 +61,6 @@ class term:
         format = ';'.join(format)
         return '\x1b[%sm%s\x1b[0m' % (format, string)
 
-
-# http://stackoverflow.com/questions/375427/non-blocking-read-on-a-subprocess-pipe-in-python
-def enqueue_output(out, queue):
-    print '[[go]]'
-    for line in iter(out.readline, ''):
-        queue.put(line)
-
-    print '[[end]]'
-    out.close()
-
-
-# http://stackoverflow.com/questions/375427/non-blocking-read-on-a-subprocess-pipe-in-python
-def process_output(myprocess, queue): #output-consuming thread
-    nextline = None
-    buf = ''
-    while True:
-        #--- extract line using read(1)
-        out = myprocess.stdout.read(1)
-        if out == '' and myprocess.poll() != None: break
-        if out != '':
-            buf += out
-            if out == '\n':
-                nextline = buf
-                buf = ''
-        if not nextline: continue
-        line = nextline
-        nextline = None
-        print '[newline %s]' % (line)
-        queue.put(line)
-
 for test_filepath in args.test:
     fp = test_filepath
     test_file = open(fp, 'rb')
@@ -106,6 +76,9 @@ for test_filepath in args.test:
 
     run_time_limit   = 0 # in seconds
     command_expect_success = True
+
+    test_counter = 0;
+    test_counter_success = 0;
 
     for line_idx, line in enumerate(test_file.readlines()):
         line_number = line_idx + 1
@@ -252,32 +225,49 @@ for test_filepath in args.test:
 
                     error_flag = True
 
+            # refresh number of tests made so far for this file
+            test_counter += 1
+
             # display test result
+            header = term.color("%s:%s [%s] "
+                                % (fp,
+                                   line_number,
+                                   test_counter),
+                                'normal','magenta')
+            descr = term.color('%s' % (description),
+                               'bold')
+            final_header = header + descr + ' '
             if command_expect_success:
                 if error_flag:
-                    print term.color("%s:%s %s - expected success, but failed"
-                                     % (fp, line_number, description),
-                                     'bold', 'red')
+                    print final_header + term.color("expected success, but failed",
+                                                    'bold', 'red')
                 else:
-                    print term.color("%s:%s %s - succeeded as expected"
-                                     % (fp, line_number, description),
-                                     'bold', 'green')
-
+                    print final_header + term.color("succeeded as expected",
+                                                    'bold', 'green')
+                    test_counter_success += 1
             else:
                 if not error_flag:
-                    print term.color("%s:%s %s - expected failure, got success"
-                                     % (fp, line_number, description),
-                                     'bold', 'red')
+                    print final_header + term.color("expected failure, got success",
+                                                    'bold', 'red')
                 else:
-                    print term.color("%s:%s %s - failed as expected"
-                                     % (fp, line_number, description),
-                                     'bold', 'green')
+                    print final_header + term.color("failed as expected",
+                                                    'bold', 'green')
+                    test_counter_success += 1
 
             # cleanup
             lines_to_feed = []
             lines_to_check_against = []
-                
 
-                
+    if test_counter == 0:
+        print header + term.color("%s no tests executed" % (fp), 'underline', 'yellow')
+
+    elif test_counter == test_counter_success:
+        print header + term.color("%s all %s tests succeeded" % (fp, test_counter),
+                                  'underline', 'green')
+
+    elif test_counter != test_counter_success:
+        print header + term.color("%s %s out of %s tests failed"
+                                  % (fp, test_counter - test_counter_success, test_counter),
+                                  'underline', 'red')
 
     test_file.close()

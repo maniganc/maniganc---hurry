@@ -32,6 +32,24 @@
 ;; run command
 
 
+;; description: and
+;; command expect success
+;; feed
+(write (and))
+(write (and 2))
+(write (and "bar" 2 3 "foo"))
+(write (and #f 3))
+(write (and #f #f))
+;; check
+#t
+2
+"foo"
+#f
+#f
+;; pause check
+;; run command
+
+
 ;; description: or
 ;; command expect success
 ;; feed
