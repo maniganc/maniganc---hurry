@@ -56,7 +56,7 @@ MgStatus* MgChar_create(MgChar** ch, char c) {
   return Mg_ok;
 }
 
-int Mg_is_an_char(MgObject* obj) {
+int Mg_is_a_char(MgObject* obj) {
   return obj->type == &MgChar_type ? 1 : 0;
 }
 

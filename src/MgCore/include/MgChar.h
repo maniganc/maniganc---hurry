@@ -13,7 +13,7 @@ extern const MgObjectParser MgChar_parser;
 
 MgStatus* MgChar_create(MgChar** ch, char c);
 
-int Mg_is_an_char(MgObject* obj);
+int Mg_is_a_char(MgObject* obj);
 
 MgStatus* MgChar_create_(MgChar** ch, char c);
 

@@ -61,6 +61,13 @@ class term:
         format = ';'.join(format)
         return '\x1b[%sm%s\x1b[0m' % (format, string)
 
+
+master_test_counter = 0
+master_test_counter_success = 0
+
+master_line_to_feed_counter = 0
+master_line_to_check_against_counter = 0
+
 for test_filepath in args.test:
     fp = test_filepath
     test_file = open(fp, 'rb')
@@ -212,7 +219,7 @@ for test_filepath in args.test:
                 else:
                     if output != list(zip(*lines_to_check_against)[1]):
                         output_mispatch = 1
-                        
+
                 if output_mispatch == 1:
                     if command_expect_success:
                         print term.color("%s:%s %s - error - unexpected output "
@@ -263,6 +270,10 @@ for test_filepath in args.test:
                                                     'bold', 'green')
                     test_counter_success += 1
 
+            # save some stats before cleanup
+            master_line_to_feed_counter += len(lines_to_feed)
+            master_line_to_check_against_counter += len(lines_to_check_against)
+            
             # cleanup
             lines_to_feed = []
             lines_to_check_against = []
@@ -279,4 +290,29 @@ for test_filepath in args.test:
                                   % (fp, test_counter - test_counter_success, test_counter),
                                   'underline', 'red')
 
+    # global stats
+    master_test_counter += test_counter
+    master_test_counter_success += test_counter_success
+
     test_file.close()
+
+header = term.color("pyranoya ", 'bold')
+
+if master_test_counter == 0:
+    print header + term.color("no tests executed", 'underline', 'yellow')
+
+else:
+    print header + term.color("send %s lines, and checked %s lines"
+                              % (master_line_to_feed_counter,
+                                 master_line_to_check_against_counter),
+                              'underline', 'blue')
+    
+    if master_test_counter == master_test_counter_success:
+        print header + term.color("all %s tests passed" % (master_test_counter),
+                                  'underline', 'green')
+
+    else:
+        print header + term.color("%s out of %s tests failed"
+                                  % (master_test_counter - master_test_counter_success,
+                                     master_test_counter),
+                                  'underline', 'red')
