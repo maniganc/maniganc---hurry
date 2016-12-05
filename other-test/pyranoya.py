@@ -12,7 +12,7 @@ import time
 args_parser = argparse.ArgumentParser(description='simple unit tester')
 args_parser.add_argument('--cmd', type=str, nargs=1,
                          help='shell command to test')
-args_parser.add_argument('--test', type=str, nargs=1,
+args_parser.add_argument('--test', type=str, nargs='+',
                          help='test file to test with')
 args = args_parser.parse_args()
 
@@ -189,7 +189,7 @@ for test_filepath in args.test:
 
                 error_flag = True
 
-            if not error_flag:
+            if 1:#not error_flag:
                 # check error messages
                 errors = command_popen.stderr.readlines()
                 if errors != []:

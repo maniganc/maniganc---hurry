@@ -3,9 +3,7 @@ checker=./pyranoya.py --test
 
 all: all-test
 
-all-test: conditional.scm.test misc.scm.test environment.scm.test
+tests=$(wildcard MgStd/*/*.scm)
 
-%.scm.test: %.scm
-	$(checker) $<
-
-
+all-test: $(tests)
+	$(checker) $(tests)
