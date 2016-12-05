@@ -273,22 +273,22 @@ for test_filepath in args.test:
             # save some stats before cleanup
             master_line_to_feed_counter += len(lines_to_feed)
             master_line_to_check_against_counter += len(lines_to_check_against)
-            
+
             # cleanup
             lines_to_feed = []
             lines_to_check_against = []
 
     if test_counter == 0:
-        print header + term.color("%s no tests executed" % (fp), 'underline', 'yellow')
+        print term.color("%s no tests executed" % (fp), 'underline', 'yellow')
 
     elif test_counter == test_counter_success:
-        print header + term.color("%s all %s tests passed" % (fp, test_counter),
-                                  'underline', 'green')
+        print term.color("%s all %s tests passed" % (fp, test_counter),
+                         'underline', 'green')
 
     elif test_counter != test_counter_success:
-        print header + term.color("%s %s out of %s tests failed"
-                                  % (fp, test_counter - test_counter_success, test_counter),
-                                  'underline', 'red')
+        print term.color("%s %s out of %s tests failed"
+                         % (fp, test_counter - test_counter_success, test_counter),
+                         'underline', 'red')
 
     # global stats
     master_test_counter += test_counter
@@ -306,7 +306,7 @@ else:
                               % (master_line_to_feed_counter,
                                  master_line_to_check_against_counter),
                               'underline', 'blue')
-    
+
     if master_test_counter == master_test_counter_success:
         print header + term.color("all %s tests passed" % (master_test_counter),
                                   'underline', 'green')

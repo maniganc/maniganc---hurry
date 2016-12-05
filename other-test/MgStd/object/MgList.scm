@@ -87,3 +87,42 @@
 ;; feed
 (pair? '(1 . 2) '("a" . (1)))
 ;; run command
+
+
+;; description: list->string 
+;; command expect success
+;; feed
+(write (list->string '(#\a)))
+(write (list->string '(#\a #\b #\c)))
+;; check
+"a"
+"abc"
+;; pause check
+;; run command
+
+;; description: list->string () case
+;; command expect success
+;; feed
+(write (list->string '()))
+;; check
+""
+;; pause check
+;; run command
+
+;; description: list->string no args
+;; command expect failure
+;; feed
+(list->string)
+;; run command
+
+;; description: list->string too much args
+;; command expect failure
+;; feed
+(list->string '(#\a) '())
+;; run command
+
+;; description: list->string improper list
+;; command expect failure
+;; feed
+(list->string '(#\a . #\b))
+;; run command

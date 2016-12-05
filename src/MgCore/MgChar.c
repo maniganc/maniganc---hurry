@@ -56,10 +56,13 @@ MgStatus* MgChar_create(MgChar** ch, char c) {
   return Mg_ok;
 }
 
-int Mg_is_a_char(MgObject* obj) {
+int Mg_is_a_char(const MgObject* obj) {
   return obj->type == &MgChar_type ? 1 : 0;
 }
 
+char MgChar_get_char(const MgChar* obj) {
+  return obj->value;
+}
 
 static MgStatus* MgParse_parse_alpha_string(MgSavedStream*ss, char** s) {
   vector_char tmp_str;
