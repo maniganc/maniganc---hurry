@@ -38,7 +38,7 @@ static const MgObjectType MgString_type = {
   .destroy = (MgObject_destroy_func)destroy
 };
 
-MgStatus* MgString_create_from_string(MgString** string, char* str) {
+MgStatus* MgString_create_from_string(MgString** string, const char* str) {
   MgString* new_string = malloc(sizeof(MgString));
   if (new_string == NULL) {
     return Mg_error_malloc;

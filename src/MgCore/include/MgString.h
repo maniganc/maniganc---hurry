@@ -12,7 +12,7 @@ MgStatus* MgString_parser_func(MgSavedStream* ss,
 
 extern const MgObjectParser MgString_parser;
 
-MgStatus* MgString_create_from_string(MgString** string, char* str);
+MgStatus* MgString_create_from_string(MgString** string, const char* str);
 
 int Mg_is_a_string(const MgObject* obj);
 

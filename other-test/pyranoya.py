@@ -12,7 +12,7 @@ import time
 args_parser = argparse.ArgumentParser(description='simple unit tester')
 args_parser.add_argument('--test', type=str, nargs='+',
                          help='test file to test with')
-args_parser.add_argument('--check-leaks', type=None,
+args_parser.add_argument('--check-valgrind', type=None,
                          help='check memory leaks')
 args = args_parser.parse_args()
 
@@ -71,7 +71,7 @@ master_test_counter_success = 0
 master_line_to_feed_counter = 0
 master_line_to_check_against_counter = 0
 
-if args.check_leaks == "1":
+if args.check_valgrind == "1":
     valgrind_check = True
 else:
     valgrind_check = False

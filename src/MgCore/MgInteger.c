@@ -48,8 +48,12 @@ MgStatus* MgInteger_create_from_int(MgInteger** integer, int value) {
   return Mg_ok;
 }
 
-int Mg_is_an_integer(MgObject* obj) {
+int Mg_is_an_integer(const MgObject* obj) {
   return obj->type == &MgInteger_type ? 1 : 0;
+}
+
+int MgInteger_get_value(const MgInteger* obj) {
+  return obj->value;
 }
 
 MgStatus* MgInteger_parser_func(MgSavedStream* ss,

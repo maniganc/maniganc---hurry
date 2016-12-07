@@ -72,16 +72,19 @@ foo
 ;; command expect failure
 ;; feed
 (string->list)
+;; pause feed
 ;; run command
 
 ;; description: string->list too much args
 ;; command expect failure
 ;; feed
 (string->list "a" "dfk")
+;; pause feed
 ;; run command
 
 ;; description: string->list not a string
 ;; command expect failure
 ;; feed
 (string->list 24)
+;; pause feed
 ;; run command

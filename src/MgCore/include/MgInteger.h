@@ -11,7 +11,9 @@ MgStatus* MgInteger_parser_func(MgSavedStream* ss,
 
 extern const MgObjectParser MgInteger_parser;
 
-int Mg_is_an_integer(MgObject* obj);
+int Mg_is_an_integer(const MgObject* obj);
+
+int MgInteger_get_value(const MgInteger* obj);
 
 MgStatus* MgInteger_create_from_int(MgInteger** integer, int value);
 
