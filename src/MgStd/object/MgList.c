@@ -144,7 +144,10 @@ MG_BUILDIN_PROCEDURE(list_to_string, "list->string") {
   MgObject_add_reference((MgObject*)list_eval);
   
   /* check if it is really a list */
-  if (!Mg_is_a_list((MgObject*)list_eval)) goto error;
+  if (!Mg_is_a_list((MgObject*)list_eval)) {
+    MgObject_drop_reference((MgObject*)list_eval);
+    goto error;
+  }
 
   /* create a string */
   vector_char str;

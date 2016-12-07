@@ -17,6 +17,8 @@ MgStatus* MgObject_evaluate(MgObject* self, MgObject** output,
     s = self->type->evaluate(self, output,
                              interpreter,
                              env);
+    if ( s != Mg_ok ) return s;
+    
     self = *output;
   } while (Mg_is_a_reference(*output) && s == Mg_ok);
   return s;

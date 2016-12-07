@@ -14,6 +14,8 @@ extern const MgObjectParser MgString_parser;
 
 MgStatus* MgString_create_from_string(MgString** string, char* str);
 
-int Mg_is_a_string(MgObject* obj);
+int Mg_is_a_string(const MgObject* obj);
+
+const char* MgString_get_string(const MgString* string);
 
 #endif /* MGSTRING_H */

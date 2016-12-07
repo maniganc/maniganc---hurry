@@ -126,3 +126,9 @@
 ;; feed
 (list->string '(#\a . #\b))
 ;; run command
+
+;; description: list->string not a list
+;; command expect failure
+;; feed
+(list->string 'symbol)
+;; run command

@@ -53,7 +53,11 @@ MgStatus* MgString_create_from_string(MgString** string, char* str) {
   return Mg_ok;
 }
 
-int Mg_is_a_string(MgObject* obj) {
+const char* MgString_get_string(const MgString* string) {
+  return string->str;
+}
+
+int Mg_is_a_string(const MgObject* obj) {
   return obj->type == &MgString_type ? 1 : 0;
 }
 

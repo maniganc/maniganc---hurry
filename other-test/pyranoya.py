@@ -10,10 +10,10 @@ import time
 
 # args parser
 args_parser = argparse.ArgumentParser(description='simple unit tester')
-args_parser.add_argument('--cmd', type=str, nargs=1,
-                         help='shell command to test')
 args_parser.add_argument('--test', type=str, nargs='+',
                          help='test file to test with')
+args_parser.add_argument('--check-leaks', type=None,
+                         help='check memory leaks')
 args = args_parser.parse_args()
 
 # test parsers
@@ -34,6 +34,9 @@ test_command_expect_re  = re.compile(';; *command expect +(.+)$')
 
 # run
 test_run_command_re = re.compile('^;; *run command')
+
+test_valgrind_errors_re = re.compile('^.*: (.+) errors.*$')
+
 
 # colors for terminal
 class term:
@@ -67,6 +70,11 @@ master_test_counter_success = 0
 
 master_line_to_feed_counter = 0
 master_line_to_check_against_counter = 0
+
+if args.check_leaks == "1":
+    valgrind_check = True
+else:
+    valgrind_check = False
 
 for test_filepath in args.test:
     fp = test_filepath
@@ -241,6 +249,41 @@ for test_filepath in args.test:
 
                     error_flag = True
 
+            # valgrind check, memory leaks only
+            error_valgrind_flag = False
+            if valgrind_check and ((error_flag == False and command_expect_success) or
+                                   (error_flag == True and not command_expect_success)) :
+                vg_cmd = "valgrind --leak-check=yes --leak-check=full " + command
+                vg_args = shlex.split(vg_cmd)
+                vg_ps = subprocess.Popen(vg_args, bufsize=1,
+                                         stdin=subprocess.PIPE,
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+                # feed stdout with test code
+                for l_number, l in lines_to_feed:
+                    vg_ps.stdin.write(l)
+
+                # send EOF
+                vg_ps.stdin.close()
+
+                errors = vg_ps.stderr.readlines()
+                match = test_valgrind_errors_re.match(errors[-1])
+                errors_num = int(match.groups()[0])
+                if errors_num == 0:
+                    error_valgrind_flag = False
+
+                else:
+                    print term.color("valgrind failed %s errors"
+                                     % (errors_num),
+                                     'bold', 'red')
+                    for l in lines_to_feed:
+                        print l;
+
+                    for e in errors:
+                        print e.replace('\n', '');
+
+                    error_valgrind_flag = True
+
             # refresh number of tests made so far for this file
             test_counter += 1
 
@@ -254,7 +297,7 @@ for test_filepath in args.test:
                                'bold')
             final_header = header + descr + ' '
             if command_expect_success:
-                if error_flag:
+                if error_flag or error_valgrind_flag:
                     print final_header + term.color("expected success, but failed",
                                                     'bold', 'red')
                 else:
@@ -262,13 +305,16 @@ for test_filepath in args.test:
                                                     'bold', 'green')
                     test_counter_success += 1
             else:
-                if not error_flag:
+                if (not error_flag) or error_valgrind_flag:
                     print final_header + term.color("expected failure, got success",
                                                     'bold', 'red')
                 else:
                     print final_header + term.color("failed as expected",
                                                     'bold', 'green')
                     test_counter_success += 1
+
+
+
 
             # save some stats before cleanup
             master_line_to_feed_counter += len(lines_to_feed)
