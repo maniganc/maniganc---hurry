@@ -24,7 +24,7 @@ static MgStatus* evaluate_on(MgBuildInProcedure* proc,
 
 static MgStatus* represent(MgBuildInProcedure* proc,
                            FILE* fs) {
-  fprintf(fs, "<build-in procedure @ %p>", proc);
+  fprintf(fs, "<build-in procedure @ %p>", (void*)proc);
   return Mg_ok;
 }
 

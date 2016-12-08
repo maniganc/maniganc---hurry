@@ -10,11 +10,11 @@
 #include "MgInteger.h"
 #include "MgChar.h"
 
-static const MgStatus error_params = {
-  .message = "integer? require one argument"
-};
-
 MG_BUILDIN_PROCEDURE(is_integer, "integer?") {
+
+  static const MgStatus error_params = {
+    .message = "integer? require one argument"
+  };
 
   /* check for arg */
   if ((MgList*)arg == Mg_emptyList) {
@@ -59,16 +59,17 @@ MG_BUILDIN_PROCEDURE(integer_to_char, "integer->char") {
   if ((MgList*)MgList_get_cdr((MgList*)arg) != Mg_emptyList) goto error;
 
   MgObject* integer_ref = MgList_get_car((MgList*)arg);
-  
+
   MgInteger* integer_eval;
-  MgObject_evaluate(integer_ref, (MgObject**)&integer_eval, interpreter, env);
+  s = MgObject_evaluate(integer_ref, (MgObject**)&integer_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
 
   MgObject_add_reference((MgObject*)integer_eval);
 
+  s = &error_params;
   if (!Mg_is_an_integer((MgObject*)integer_eval)) goto drop_eval_and_other_and_error;
 
   int val = MgInteger_get_value(integer_eval);
-  
   if ( val < 0 || val > 255 ) goto drop_eval_and_other_and_error;
 
   MgChar* ch;
@@ -78,7 +79,6 @@ MG_BUILDIN_PROCEDURE(integer_to_char, "integer->char") {
   MgObject_drop_reference((MgObject*)integer_eval);
 
   *output = (MgObject*)ch;
-
   return Mg_ok;
 
   drop_eval_and_other_and_error:

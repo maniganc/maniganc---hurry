@@ -36,12 +36,17 @@ typedef MgStatus* (*MgObject_evaluate_on_func)(MgObject* self,
 typedef MgStatus* (*MgObject_represent_func)(MgObject* self,
                                              FILE* fs);
 
+typedef MgStatus* (*MgObject_is_equal_to_func)(MgObject* self,
+                                               MgObject* other,
+                                               FILE* fs);
+
 typedef MgStatus* (*MgObject_destroy_func)(MgObject* self);
 
 typedef struct {
   MgObject_evaluate_func evaluate;
   MgObject_evaluate_on_func evaluate_on;
   MgObject_represent_func represent;
+  MgObject_is_equal_to_func is_equal;
   MgObject_destroy_func destroy;
 }MgObjectType;
 

@@ -14,7 +14,8 @@ static void reset_static_vars(MgSavedStream* s) {
   s->init = 0;
 
   s->line_number = 1;
-};
+}
+
 void MgSavedStream_init(MgSavedStream* s,
                         MgSavedStream_getchar_func getchar,
                         void* getchar_payload) {

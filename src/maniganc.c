@@ -112,6 +112,5 @@ int main(int argc, char *argv[]) {
   MgInterpreter_destroy(interpreter);
   free_filename_and_error:
   if (filename) free(filename);
-  error:
   return EXIT_FAILURE;
 }
