@@ -22,13 +22,16 @@
 ;; command expect failure
 ;; feed
 (null?)
+;; pause feed
 ;; run command
 
 ;; description: null? too much args
 ;; command expect failure
 ;; feed
 (null? 1 2)
+;; pause feed
 ;; run command
+
 
 
 ;; description: list?
@@ -51,13 +54,16 @@
 ;; command expect failure
 ;; feed
 (list?)
+;; pause feed
 ;; run command
 
 ;; description: list? too much args
 ;; command expect failure
 ;; feed
 (list? '() '(1))
+;; pause feed
 ;; run command
+
 
 
 ;; description: pair?
@@ -80,12 +86,14 @@
 ;; command expect failure
 ;; feed
 (pair?)
+;; pause feed
 ;; run command
 
 ;; description: pair? too much args
 ;; command expect failure
 ;; feed
 (pair? '(1 . 2) '("a" . (1)))
+;; pause feed
 ;; run command
 
 
@@ -113,22 +121,65 @@
 ;; command expect failure
 ;; feed
 (list->string)
+;; pause feed
 ;; run command
 
 ;; description: list->string too much args
 ;; command expect failure
 ;; feed
 (list->string '(#\a) '())
+;; pause feed
 ;; run command
 
 ;; description: list->string improper list
 ;; command expect failure
 ;; feed
 (list->string '(#\a . #\b))
+;; pause feed
 ;; run command
 
 ;; description: list->string not a list
 ;; command expect failure
 ;; feed
 (list->string 'symbol)
+;; pause feed
+;; run command
+
+
+
+;; description: cons
+;; command expect success
+;; feed
+(write (cons 1 2))
+(write
+ (cons
+  (cons 2 '())
+  '()))
+(define va #\y)
+(define vb #\z)
+(write (cons va vb))
+;; check
+(1 . 2)
+((2))
+(#\y . #\z)
+;; pause check
+;; run command
+
+;; description: cons not enough args
+;; command expect failure
+;; feed
+(cons)
+;; pause feed
+;; run command
+
+;; description: cons not enough args 2
+;; feed
+(cons 1)
+;; pause feed
+;; run command
+
+;; description: cons too much args
+;; feed
+(cons 1 2 3)
+;; pause feed
 ;; run command
