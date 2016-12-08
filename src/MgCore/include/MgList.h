@@ -82,6 +82,16 @@ MgObject* MgList_get_cdr(const MgList* list);
 
 
 /**
+ * set car of a list
+ *
+ * @param list 
+ * @param obj 
+ * @return 
+ */
+MgStatus* MgList_set_car(MgList* list, MgObject* obj);
+
+
+/**
  * set cdr of a list
  *
  * @param list 

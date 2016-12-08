@@ -61,11 +61,13 @@ MG_BUILDIN_PROCEDURE(string_to_symbol, "string->symbol") {
   MgObject* string_ref = MgList_get_car((MgList*)arg);
 
   MgString* string_eval;
-  MgObject_evaluate(string_ref, (MgObject**)&string_eval, interpreter, env);
-
+  s = MgObject_evaluate(string_ref, (MgObject**)&string_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
+  
   MgObject_add_reference((MgObject*)string_eval);
 
   /* check if it is really a string */
+  s = &error_params_string_to_symbol;
   if (!Mg_is_a_string((MgObject*)string_eval)) goto drop_eval_and_other_and_error;
 
   MgIdentifier* id;
@@ -101,10 +103,12 @@ MG_BUILDIN_PROCEDURE(string_to_list, "string->list") {
   MgObject* string_ref = MgList_get_car((MgList*)arg);
 
   MgString* string_eval;
-  MgObject_evaluate(string_ref, (MgObject**)&string_eval, interpreter, env);
+  s = MgObject_evaluate(string_ref, (MgObject**)&string_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
 
   MgObject_add_reference((MgObject*)string_eval);
 
+  s = &error_params_string_to_list;
   if (!Mg_is_a_string((MgObject*)string_eval)) goto drop_eval_and_other_and_error;
 
   MgList* list;

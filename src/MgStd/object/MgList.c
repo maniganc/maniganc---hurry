@@ -10,7 +10,7 @@
 #include "MgString.h"
 #include "MgChar.h"
 #include "MgPair.h"
-
+#include "MgUnspecified.h"
 /* predicates */
 
 MG_BUILDIN_PROCEDURE(is_null, "null?") {
@@ -197,6 +197,8 @@ MG_BUILDIN_PROCEDURE(list_to_string, "list->string") {
   return s;
 }
 
+
+
 MG_BUILDIN_PROCEDURE(cons, "cons") {
 
   static const MgStatus error_params = {
@@ -233,6 +235,9 @@ MG_BUILDIN_PROCEDURE(cons, "cons") {
   s = MgPair_create(&pair, arg1_eval, arg2_eval);
   if ( s != Mg_ok ) goto drop_arg2_and_error;
 
+  MgObject_drop_reference(arg1_eval);
+  MgObject_drop_reference(arg2_eval);
+
   *output = (MgObject*)pair;
   return Mg_ok;
 
@@ -240,6 +245,241 @@ MG_BUILDIN_PROCEDURE(cons, "cons") {
   MgObject_drop_reference(arg2_eval);
   drop_arg1_and_error:
   MgObject_drop_reference(arg1_eval);
+  error:
+  return s;
+}
+
+
+MG_BUILDIN_PROCEDURE(car, "car") {
+
+  static const MgStatus error_params = {
+    .message = "car require a non-empty list"
+  };
+
+  MgStatus* s;
+
+  /* require one arg */
+  s = &error_params;
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg1 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg != (MgObject*)Mg_emptyList ) goto error;
+
+  /* evaluate arg */
+  MgObject* arg1_eval;
+  s = MgObject_evaluate(arg1, &arg1_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
+  MgObject_add_reference(arg1_eval);
+
+  /* check if arg1 is a list  */
+  s = &error_params;
+  if ( !Mg_is_a_list(arg1_eval) ) goto drop_arg1_and_error;
+
+  /* check if arg1 is not empty */
+  if ( MgList_is_empty((MgList*)arg1_eval) ) goto drop_arg1_and_error;
+
+  *output = MgList_get_car((MgList*)arg1_eval);
+
+  MgObject_drop_reference(arg1_eval);
+
+  return Mg_ok;
+
+  drop_arg1_and_error:
+  MgObject_drop_reference(arg1_eval);
+  error:
+  return s;
+}
+
+MG_BUILDIN_PROCEDURE(cdr, "cdr") {
+
+  static const MgStatus error_params = {
+    .message = "cdr require a non-empty list"
+  };
+
+  MgStatus* s;
+
+  /* require one arg */
+  s = &error_params;
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg1 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg != (MgObject*)Mg_emptyList ) goto error;
+
+  /* evaluate arg */
+  MgObject* arg1_eval;
+  s = MgObject_evaluate(arg1, &arg1_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
+  MgObject_add_reference(arg1_eval);
+
+  /* check if arg1 is a list  */
+  s = &error_params;
+  if ( !Mg_is_a_list(arg1_eval) ) goto drop_arg1_and_error;
+
+  /* check if arg1 is not empty */
+  if ( MgList_is_empty((MgList*)arg1_eval) ) goto drop_arg1_and_error;
+
+  *output = MgList_get_cdr((MgList*)arg1_eval);
+
+  MgObject_drop_reference(arg1_eval);
+
+  return Mg_ok;
+
+  drop_arg1_and_error:
+  MgObject_drop_reference(arg1_eval);
+  error:
+  return s;
+}
+
+MG_BUILDIN_PROCEDURE(set_car_mutable, "set-car!") {
+
+  static const MgStatus error_params = {
+    .message = "set-car! require a non-empty list and an object"
+  };
+
+  MgStatus* s;
+
+  /* require two args */
+  s = &error_params;
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg1 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg2 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg != (MgObject*)Mg_emptyList ) goto error;
+
+  /* evaluate args */
+  MgObject* arg1_eval;
+  s = MgObject_evaluate(arg1, &arg1_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
+  MgObject_add_reference(arg1_eval);
+
+  MgObject* arg2_eval;
+  s = MgObject_evaluate(arg2, &arg2_eval, interpreter, env);
+  if ( s != Mg_ok ) goto drop_arg1_and_error;
+  MgObject_add_reference(arg2_eval);
+
+  /* check if arg1 is a list  */
+  s = &error_params;
+  if ( !Mg_is_a_list(arg1_eval) ) goto drop_arg2_and_error;
+
+  /* check if arg1 is not empty */
+  if ( MgList_is_empty((MgList*)arg1_eval) ) goto drop_arg2_and_error;
+
+
+  MgList_set_car((MgList*)arg1_eval, arg2_eval);
+  
+  *output = (MgObject*)Mg_unspecified;
+
+  MgObject_drop_reference(arg1_eval);
+  MgObject_drop_reference(arg2_eval);
+  
+  return Mg_ok;
+
+  drop_arg2_and_error:
+  MgObject_drop_reference(arg2_eval);
+  drop_arg1_and_error:
+  MgObject_drop_reference(arg1_eval);
+  error:
+  return s;
+}
+
+MG_BUILDIN_PROCEDURE(set_cdr_mutable, "set-cdr!") {
+
+  static const MgStatus error_params = {
+    .message = "set-cdr! require a non-empty list and an object"
+  };
+
+  MgStatus* s;
+
+  /* require two args */
+  s = &error_params;
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg1 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg == (MgObject*)Mg_emptyList ) goto error;
+  MgObject* arg2 = MgList_get_car((MgList*)arg);
+
+  arg = MgList_get_cdr((MgList*)arg);
+  if ( arg != (MgObject*)Mg_emptyList ) goto error;
+
+  /* evaluate args */
+  MgObject* arg1_eval;
+  s = MgObject_evaluate(arg1, &arg1_eval, interpreter, env);
+  if ( s != Mg_ok ) goto error;
+  MgObject_add_reference(arg1_eval);
+
+  MgObject* arg2_eval;
+  s = MgObject_evaluate(arg2, &arg2_eval, interpreter, env);
+  if ( s != Mg_ok ) goto drop_arg1_and_error;
+  MgObject_add_reference(arg2_eval);
+
+  /* check if arg1 is a list  */
+  s = &error_params;
+  if ( !Mg_is_a_list(arg1_eval) ) goto drop_arg2_and_error;
+
+  /* check if arg1 is not empty */
+  if ( MgList_is_empty((MgList*)arg1_eval) ) goto drop_arg2_and_error;
+
+
+  MgList_set_cdr((MgList*)arg1_eval, arg2_eval);
+  
+  *output = (MgObject*)Mg_unspecified;
+
+  MgObject_drop_reference(arg1_eval);
+  MgObject_drop_reference(arg2_eval);
+  
+  return Mg_ok;
+
+  drop_arg2_and_error:
+  MgObject_drop_reference(arg2_eval);
+  drop_arg1_and_error:
+  MgObject_drop_reference(arg1_eval);
+  error:
+  return s;
+}
+
+
+MG_BUILDIN_PROCEDURE(list, "list") {
+  MgStatus* s;
+
+  MgList* list_head;
+  s = MgList_create(&list_head);
+  if ( s != Mg_ok ) goto error;
+
+  MgList* list_tail = list_head;
+  
+  while ( arg != (MgObject*)Mg_emptyList ) {
+    MgObject* arg_obj = MgList_get_car((MgList*)arg);
+    MgObject* eval;
+    s = MgObject_evaluate(arg_obj, &eval, interpreter, env);
+    if ( s != Mg_ok ) goto destroy_list_and_error;
+
+    MgObject_add_reference(eval);
+    
+    s = MgList_push_back(&list_tail, eval);
+    if ( s != Mg_ok ) goto destroy_list_and_error;
+
+    MgObject_drop_reference(eval);
+    
+    if ( list_head == Mg_emptyList ) {
+      list_head = list_tail;
+    }
+    
+    arg = MgList_get_cdr((MgList*)arg);
+  };
+
+  *output = (MgObject*)list_head;
+
+  return Mg_ok;
+  
+  destroy_list_and_error:
+  MgList_destroy(list_head);
   error:
   return s;
 }

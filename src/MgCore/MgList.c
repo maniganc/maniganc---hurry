@@ -314,6 +314,22 @@ MgObject* MgList_get_cdr(const MgList* list) {
   return list->cdr;
 }
 
+MgStatus* MgList_set_car(MgList* list, MgObject* obj) {
+  if (MgList_is_empty(list)) {
+    return Mg_error;
+  }
+
+  /* drop current cdr */
+  MG_OBJECT_DROP_REF(list->car);
+
+  /* replace it */
+  list->car = obj;
+  MG_OBJECT_ADD_REF(obj);
+
+  return Mg_ok;
+}
+
+
 MgStatus* MgList_set_cdr(MgList* list, MgObject* obj) {
   if (MgList_is_empty(list)) {
     return Mg_error;
