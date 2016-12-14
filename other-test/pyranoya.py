@@ -202,6 +202,12 @@ for test_filepath in args.test:
                                         command_popen.returncode),
                                      'bold', 'red')
 
+                if command_popen.returncode != 1:
+                     print term.color("%s:%s %s - warning: error code %s is not -1 "
+                                      % (fp, line_number, description,
+                                         command_popen.returncode),
+                                      'bold', 'yellow')
+
                 error_flag = True
 
             if 1:#not error_flag:
