@@ -103,11 +103,7 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
 
   MgList* bond_list = (MgList*)MgList_get_cdr(env);
 
-  if (bond_list == Mg_emptyList) {
-    return MgEnv_error_identifier_not_found;
-  }
-
-  do {
+  while(bond_list != Mg_emptyList){
     MgList* bond = (MgList*)MgList_get_car((MgList*)bond_list);
     if (!Mg_is_a_list((MgObject*)bond)) return &error_invalid_environment;
     
@@ -124,8 +120,7 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
     /* next bond */
     bond_list = (MgList*)MgList_get_cdr(bond_list);
   }
-  while(bond_list != Mg_emptyList);
-
+  
   /* nothing in the current env */
   if (scope_limited) {
     return MgEnv_error_identifier_not_found;

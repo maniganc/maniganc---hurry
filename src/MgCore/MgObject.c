@@ -44,7 +44,7 @@ MgStatus* MgObject_evaluate_on(MgObject* self,
   return s;
 }
 
-MgStatus* MgObject_destroy(MgObject* obj) {
+MgStatus* MgObject_destroy(MgObject* obj) {  
   return obj->type->destroy(obj);
 }
 

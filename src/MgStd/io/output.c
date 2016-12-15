@@ -6,6 +6,8 @@
 #include "MgInterpreter.h"
 #include "MgInteger.h"
 
+#include "MgUnspecified.h"
+
 MG_BUILDIN_PROCEDURE(pp, "write") {
   MgStatus* status;
   
@@ -27,7 +29,7 @@ MG_BUILDIN_PROCEDURE(pp, "write") {
 
   MgObject_drop_reference(obj_evaluated);
 
-  *output = (MgObject*)MgInterpreter_get_emptylist(interpreter);
+  *output = (MgObject*)Mg_unspecified;
   
   return Mg_ok;
 }

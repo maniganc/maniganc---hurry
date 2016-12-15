@@ -132,6 +132,7 @@ MgStatus* MgParser_check_symbol_ending(MgSavedStream* ss) {
   case '\0':
   case '\n':
   case ';':
+  case '"':
     return Mg_ok;
     
   default:

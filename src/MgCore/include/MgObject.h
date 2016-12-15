@@ -13,6 +13,21 @@
 
 #include "MgStatus.h"
 
+
+#define debug_object(obj, ...)                                          \
+  do {                                                                  \
+    if(DEBUG) {                                                         \
+      fprintf(stderr, "\n");                                            \
+      fprintf(stderr, "[debug %s:%d %s()]", __FILE__, __LINE__, __func__); \
+      fprintf(stderr, __VA_ARGS__);                                     \
+      fprintf(stderr, "\n");                                            \
+      MgObject_represent((MgObject*)obj, stderr);                       \
+      fprintf(stderr, "\n");                                            \
+    }                                                                   \
+  }                                                                     \
+  while (0);
+
+
 typedef size_t Mg_size_t;
 
 typedef struct MgObject MgObject;
@@ -43,16 +58,16 @@ typedef MgStatus* (*MgObject_is_equal_to_func)(MgObject* self,
 typedef MgStatus* (*MgObject_destroy_func)(MgObject* self);
 
 typedef struct {
-  MgObject_evaluate_func evaluate;
-  MgObject_evaluate_on_func evaluate_on;
-  MgObject_represent_func represent;
-  MgObject_is_equal_to_func is_equal;
-  MgObject_destroy_func destroy;
+MgObject_evaluate_func evaluate;
+MgObject_evaluate_on_func evaluate_on;
+MgObject_represent_func represent;
+MgObject_is_equal_to_func is_equal;
+MgObject_destroy_func destroy;
 }MgObjectType;
 
 struct MgObject {
-  Mg_size_t refcnt;
-  const MgObjectType* type;
+Mg_size_t refcnt;
+const MgObjectType* type;
 };
 
 /**

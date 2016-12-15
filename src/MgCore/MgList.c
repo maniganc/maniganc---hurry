@@ -5,6 +5,7 @@
 #include "debug.h"
 
 #include "MgInterpreter.h"
+#include "MgUnspecified.h"
 
 static const MgStatus error_improper = {
   .message = "List is improper"
@@ -16,6 +17,49 @@ struct MgList { MgObject base;
   MgObject* car;
   MgObject* cdr;
 };
+
+MgStatus* MgList_evaluate_sequential(MgList* list, MgObject** output,
+                                     MgInterpreter* interpreter,
+                                     MgEnv* env) {
+  /* check if there is no list */
+  if (list == Mg_emptyList) {
+    *output = (MgObject*)Mg_unspecified;
+    return Mg_ok;
+  }
+
+  /* iterate over args */
+  MgObject* obj;
+  do {
+    /* get next object */
+    obj = MgList_get_car(list);
+
+    /* if it is the last object, we don't need to kwow its evaluation */
+    if (MgList_get_cdr(list) == (MgObject*)Mg_emptyList) {
+      return MgObjectReference_return_ref(obj,
+                                          (MgObjectReference**)output,
+                                          interpreter, env);
+    }
+
+    /* evaluate it */
+    MgObject* obj_eval;
+    MgStatus* s = MgObject_evaluate(obj, &obj_eval, interpreter, env);
+
+    /* check errors */
+    if (s != Mg_ok) {
+      return s;
+    }
+
+    /* we used the object
+     * ensure that the object get cleaned if it have to */
+    MgObject_add_reference(obj_eval);
+    MgObject_drop_reference(obj_eval);
+
+    /* next list */
+    list = (MgList*)MgList_get_cdr((MgList*)list);
+  } while(1);
+
+  return Mg_ok;
+}
 
 static MgStatus* evaluate(MgList* list, MgObject** output,
                           MgInterpreter* interpreter,

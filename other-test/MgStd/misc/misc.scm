@@ -36,12 +36,38 @@ sym
 ;; command expect failure
 ;; feed
 (quote)
+;; pause feed
 ;; run command
 
 ;; feed
 (quote 1 2)
+;; pause feed
 ;; run command
 
 ;; feed
 '
+;; pause feed
+;; run command
+
+
+
+
+;; description: begin form
+;; command expect success
+;; feed
+(write (begin))
+(write (begin 1 2 3))
+(write
+ (begin
+   (write 3)
+   (write 4)
+   (write "well")))
+;; check
+<unspecified>
+3
+3
+4
+"well"
+<unspecified>
+;; pause check
 ;; run command

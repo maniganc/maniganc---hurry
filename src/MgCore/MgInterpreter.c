@@ -57,7 +57,7 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
   /* create object return reference */
   status = MgObjectReference_create(&new_interpreter->object_reference);
   if (status != Mg_ok) goto destroy_list_and_error;
-  
+
   /* create symbol environment */
   status = MgEnv_create(&new_interpreter->symbol_env,
                         new_interpreter->emptylist); /* parent is the emptylist */
@@ -106,7 +106,11 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
   MgObjectReference_destroy(interpreter->object_reference);
   MgList_destroy(interpreter->emptylist);
-  MgObject_drop_reference((MgObject*)interpreter->symbol_env);
+  MgEnv_destroy(interpreter->symbol_env);
+/* destroy, not drop
+ * drop does not work because of dependency loops ex:(define f (lambda () (write ())))
+ * f needs env_f needs env, and because of define env needs f
+ * it should work even if several env needs each other */
   free(interpreter);
   return Mg_ok;
 }
@@ -137,10 +141,10 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
               s->message);
 
       if (!interactive_mode) {
-            /* exit */
-            return s;
+        /* exit */
+        return s;
       }
-      
+
       /* flush stdin */
       int ch; while ((ch = getchar()) != '\n' && ch != EOF);
       MgSavedStream_reset(ss);

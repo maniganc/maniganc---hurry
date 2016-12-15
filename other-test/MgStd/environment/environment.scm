@@ -55,18 +55,21 @@
 ;; command expect failure
 ;; feed
 (define 1 1)
+;; pause feed
 ;; run command
 
 ;; description: define from unknown var test
 ;; command expect failure
 ;; feed
 (define var unkvar)
+;; pause feed
 ;; run command
 
 ;; description: referencing an unknwown var test
 ;; command expect failure
 ;; feed
 (write unkvar)
+;; pause feed
 ;; run command
 
 ;; description: define, too few args 
@@ -76,6 +79,7 @@
 ;; run command
 ;; feed
 (define a)
+;; pause feed
 ;; run command
 
 ;; description: define, too much args
@@ -83,6 +87,7 @@
 ;; feed
 ;;  wrong, too much args
 (define a 1 1)
+;; pause feed
 ;; run command
 
 
@@ -92,6 +97,7 @@
 ;; command expect failure
 ;; feed
 (set! 1 1)
+;; pause feed
 ;; run command
 
 ;; description: set! changing a var value test
@@ -110,9 +116,11 @@
 ;; command expect failure
 ;; feed
 (set!)
+;; pause feed
 ;; run command
 ;; feed
 (set! a)
+;; pause feed
 ;; run command
 
 ;; description: set!, too much args
@@ -120,6 +128,7 @@
 ;; feed
 ;; wrong, too much args
 (set! a 1 2)
+;; pause feed
 ;; run command
 
 

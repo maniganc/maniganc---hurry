@@ -120,6 +120,21 @@ MgStatus* MgList_push_front(MgList** list_head,
  */
 MgStatus* MgList_push_back(MgList** list_tail, MgObject* object);
 
+
+/**
+ * evaluate sequentially every item in a list, return the last one
+ *
+ * @param list 
+ * @param output 
+ * @param interpreter 
+ * @param env 
+ * @return 
+ */
+MgStatus* MgList_evaluate_sequential(MgList* list, MgObject** output,
+                                    MgInterpreter* interpreter,
+                                    MgEnv* env);
+
+
 /**
  * destroy a list. refcounter is ignored
  *
