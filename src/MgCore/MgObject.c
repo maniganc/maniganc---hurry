@@ -18,11 +18,24 @@ MgStatus* MgObject_evaluate(MgObject* self, MgObject** output,
                              interpreter,
                              env);
     if ( s != Mg_ok ) return s;
-    
+
     self = *output;
   } while (Mg_is_a_reference(*output) && s == Mg_ok);
   return s;
 }
+
+
+MgStatus* MgObject_lazy_evaluate(MgObject* self, MgObject** output,
+                                 MgInterpreter* interpreter,
+                                 MgEnv* env) {
+  MgStatus* s;
+  s = self->type->evaluate(self, output,
+                           interpreter,
+                           env);
+
+  return s;
+}
+
 
 MgStatus* MgObject_evaluate_on(MgObject* self,
                                MgObject* target,
@@ -44,7 +57,21 @@ MgStatus* MgObject_evaluate_on(MgObject* self,
   return s;
 }
 
-MgStatus* MgObject_destroy(MgObject* obj) {  
+
+MgStatus* MgObject_lazy_evaluate_on(MgObject* self,
+                                    MgObject* target,
+                                    MgObject** output,
+                                    MgInterpreter* interpreter,
+                                    MgEnv* env) {
+  MgStatus* s;
+  s =  self->type->evaluate_on(self, target, output,
+                               interpreter,
+                               env);
+  return s;
+}
+
+
+MgStatus* MgObject_destroy(MgObject* obj) {
   return obj->type->destroy(obj);
 }
 

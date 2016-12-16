@@ -94,7 +94,21 @@ MgStatus* MgObject_evaluate(MgObject* self, MgObject** output,
                             MgEnv* env);
 
 /**
+ * evaluate an object into another.
+ * the result of this evaluation can be a reference
+ *
+ * @param self
+ * @param output
+ * @return Mg_ok if no errors
+ */
+MgStatus* MgObject_lazy_evaluate(MgObject* self, MgObject** output,
+                                 MgInterpreter* interpreter,
+                                 MgEnv* env);
+
+
+/**
  * apply an object on another object
+ * if the result is a reference, it is reevaluated again until the result is not a reference
  *
  * @param self
  * @param target
@@ -106,6 +120,22 @@ MgStatus* MgObject_evaluate_on(MgObject* self,
                                MgObject** output,
                                MgInterpreter* interpreter,
                                MgEnv* env);
+
+/**
+ * apply an object on another object
+ * the result can be a reference object
+ *
+ * @param self
+ * @param target
+ * @param output
+ * @return
+ */
+MgStatus* MgObject_lazy_evaluate_on(MgObject* self,
+                                    MgObject* target,
+                                    MgObject** output,
+                                    MgInterpreter* interpreter,
+                                    MgEnv* env);
+
 
 /**
  * destroy the object without checking its reference counter.

@@ -13,7 +13,7 @@ struct MgObjectReference { MgObject base;
 static MgStatus* evaluate(MgObjectReference* self, MgObject** output,
 			  MgInterpreter* interpreter,
 			  MgEnv* env){
-  return MgObject_evaluate(self->obj, output, interpreter, self->env);
+  return MgObject_lazy_evaluate(self->obj, output, interpreter, self->env);
 }
 
 static MgStatus* error(void) {

@@ -84,11 +84,11 @@ static MgStatus* evaluate(MgList* list, MgObject** output,
 
   /* evaluate car on cdr (args) */
   MgObject* application_output;
-  status = MgObject_evaluate_on(car_evaluated,
-                                MgList_get_cdr(list),
-                                &application_output,
-                                interpreter,
-                                env);
+  status = MgObject_lazy_evaluate_on(car_evaluated,
+                                     MgList_get_cdr(list),
+                                     &application_output, 
+                                     interpreter,
+                                     env);
   if (status != Mg_ok) goto drop_evaluate_and_error;
 
   /* car evaluation is useless now */
