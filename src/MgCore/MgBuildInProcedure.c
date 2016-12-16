@@ -60,3 +60,7 @@ MgStatus* MgBuildInProcedure_destroy(MgBuildInProcedure* procedure) {
   free(procedure);
   return Mg_ok;
 }
+
+int Mg_is_a_buildin_procedure(const MgObject* obj) {
+  return obj->type == &type ? 1 : 0;
+}

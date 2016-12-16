@@ -35,4 +35,5 @@ const Mg_buildin_procedure Mg_buildin_procedure_array[] = {
 {mg_buildin_procedure_string_to_symbol, "string->symbol"},
 {mg_buildin_procedure_string_to_list, "string->list"},
 {mg_buildin_procedure_is_eq, "eq?"},
+{mg_buildin_procedure_is_a_procedure, "procedure?"},
 {NULL, NULL}};

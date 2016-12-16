@@ -34,4 +34,5 @@ MG_BUILDIN_PROCEDURE(is_string, "string?");
 MG_BUILDIN_PROCEDURE(string_to_symbol, "string->symbol");
 MG_BUILDIN_PROCEDURE(string_to_list, "string->list");
 MG_BUILDIN_PROCEDURE(is_eq, "eq?");
+MG_BUILDIN_PROCEDURE(is_a_procedure, "procedure?");
 extern const Mg_buildin_procedure Mg_buildin_procedure_array[];

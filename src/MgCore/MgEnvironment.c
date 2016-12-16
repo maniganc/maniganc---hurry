@@ -11,7 +11,7 @@ MgStatus* MgEnv_create(MgEnv** env,
 
   status = MgList_push_front(env, (MgObject*)parent_env);
   if (status != Mg_ok) goto destroy_and_error;
-
+  
   return Mg_ok;
 
  destroy_and_error:

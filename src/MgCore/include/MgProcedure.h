@@ -14,4 +14,6 @@ MgStatus* MgProcedure_create(MgProcedure** procedure,
 
 MgStatus* MgProcedure_destroy(MgProcedure* procedure);
 
+int Mg_is_a_procedure(const MgObject* obj);
+
 #endif /* MGPROCEDURE_H */
