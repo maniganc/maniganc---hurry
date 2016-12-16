@@ -16,4 +16,6 @@ MgStatus* MgProcedure_destroy(MgProcedure* procedure);
 
 int Mg_is_a_procedure(const MgObject* obj);
 
+MgEnv* MgProcedure_get_environment(const MgProcedure* proc);
+
 #endif /* MGPROCEDURE_H */

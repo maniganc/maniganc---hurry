@@ -69,6 +69,15 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
 					  int scope_limited);
 
 
+/**
+ * unspecify any bond that link to a procedure that depends on the env
+ *
+ * @param env 
+ * @param recursive 
+ * @return 
+ */
+MgStatus* MgEnv_clean_dependency_loops(MgEnv* env, int recursive);
+
 extern const MgStatus* MgEnv_error_identifier_not_found;
 
 #endif /* MGENVIRONMENT_H */

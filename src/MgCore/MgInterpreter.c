@@ -106,7 +106,9 @@ MgStatus* MgInterpreter_create(MgInterpreter** interpreter) {
 MgStatus* MgInterpreter_destroy(MgInterpreter* interpreter) {
   MgObjectReference_destroy(interpreter->object_reference);
   MgList_destroy(interpreter->emptylist);
-  MgEnv_destroy(interpreter->symbol_env);
+  MgEnv_clean_dependency_loops(interpreter->symbol_env, 1);
+  MgObject_drop_reference((MgObject*)interpreter->symbol_env);
+  /* MgEnv_destroy(interpreter->symbol_env); */
 /* destroy, not drop
  * drop does not work because of dependency loops ex:(define f (lambda () (write ())))
  * f needs env_f needs env, and because of define env needs f

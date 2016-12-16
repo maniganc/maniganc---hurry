@@ -1,6 +1,8 @@
 
 #include "MgEnvironment.h"
 #include "MgPair.h"
+#include "MgProcedure.h"
+#include "MgUnspecified.h"
 
 MgStatus* MgEnv_create(MgEnv** env,
                        MgEnv* parent_env) {
@@ -11,7 +13,7 @@ MgStatus* MgEnv_create(MgEnv** env,
 
   status = MgList_push_front(env, (MgObject*)parent_env);
   if (status != Mg_ok) goto destroy_and_error;
-  
+
   return Mg_ok;
 
  destroy_and_error:
@@ -106,10 +108,10 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
   while(bond_list != Mg_emptyList){
     MgList* bond = (MgList*)MgList_get_car((MgList*)bond_list);
     if (!Mg_is_a_list((MgObject*)bond)) return &error_invalid_environment;
-    
+
     MgIdentifier* id = (MgIdentifier*)MgList_get_car(bond);
     if (!Mg_is_an_identifier((MgObject*)id)) return &error_invalid_environment;
-    
+
     const char* id_name = MgIdentifier_get_name(id);
 
     if (strcmp(id_name, target_id_name) == 0) {
@@ -120,20 +122,57 @@ MgStatus* MgEnv_find_bond_from_identifier(const MgEnv* env,
     /* next bond */
     bond_list = (MgList*)MgList_get_cdr(bond_list);
   }
-  
+
   /* nothing in the current env */
   if (scope_limited) {
     return MgEnv_error_identifier_not_found;
   }
-  
+
   /* could not find the identifier in the current environment
    * search again in the parent env */
   MgEnv* parent_env = (MgEnv*)MgList_get_car(env);
   return MgEnv_find_bond_from_identifier(parent_env,
-					 identifier,
-					 output_bond,
-					 scope_limited);
+                                         identifier,
+                                         output_bond,
+                                         scope_limited);
 }
+
+MgStatus* MgEnv_clean_dependency_loops(MgEnv* env, int recursive) {
+  if (env == Mg_emptyList) {
+    return Mg_ok;
+  }
+
+  MgList* bond_list = (MgList*)MgList_get_cdr(env);
+  while(bond_list != Mg_emptyList){
+    MgList* bond = (MgList*)MgList_get_car((MgList*)bond_list);
+    if (!Mg_is_a_list((MgObject*)bond)) return &error_invalid_environment;
+
+    MgObject* binded_obj = MgList_get_cdr(bond);
+
+    if ( Mg_is_a_procedure(binded_obj) ) {
+      MgProcedure* proc = (MgProcedure*)binded_obj;
+      MgEnv* proc_env = MgProcedure_get_environment(proc);
+      if ( proc_env != Mg_emptyList) {
+        MgEnv* proc_env_parent = (MgEnv*)MgList_get_car(proc_env);
+	if ( proc_env_parent == env ) {
+	  /* procedure needs env, and the bond in the env need the procedure */
+	  if ( recursive ) {
+	    MgStatus* s = MgEnv_clean_dependency_loops(proc_env,
+						       recursive);
+	    if ( s != Mg_ok ) return s;
+	  }
+	  /* mark the bond as unspecified, procedure will be dropped */
+	  MgList_set_cdr(bond, (MgObject*)Mg_unspecified);
+	}
+      }
+    }
+    /* next bond */
+    bond_list = (MgList*)MgList_get_cdr(bond_list);
+  }
+
+  return Mg_ok;
+}
+
 
 const MgStatus error_identifier_not_found = {
   .message = "cannot find identifier"
