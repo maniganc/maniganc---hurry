@@ -146,10 +146,11 @@ MgStatus* MgInterpreter_evaluate_sstream(MgInterpreter* interpreter,
         /* exit */
         return s;
       }
-
-      /* flush stdin */
-      int ch; while ((ch = getchar()) != '\n' && ch != EOF);
-      MgSavedStream_reset(ss);
+      else {
+	/* flush stdin */
+	int ch; while ((ch = getchar()) != '\n' && ch != EOF);
+	MgSavedStream_reset(ss);
+      }
     }
 
     else {

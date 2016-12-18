@@ -32,6 +32,13 @@ test-1-evolved: release
 test-2: release
 	$(CHECKER) -e ./scheme-file $(TEST_2)
 
+test-other: release
+	make -C other-test
+
+test-other-mem-check: release
+	make -C other-test check_valgrind=1
+
+
 .PHONY: debug release test-all all
 
 tarball : 

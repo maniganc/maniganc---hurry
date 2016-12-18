@@ -17,18 +17,34 @@
 ;; pause check
 ;; run command
 
+;; description: if short form
+;; command expect success
+;; feed
+(write (if 1 1))
+(write (if #f 2))
+(write (if #t 3))
+;; check
+1
+<unspecified>
+3
+;; pause check
+;; run command
+
 ;; description: if, wrong syntax
 ;; command expect failure
 ;; feed
 (if)
+;; pause feed
 ;; run command
 
 ;; feed
 (if 1)
+;; pause feed
 ;; run command
 
 ;; feed
-(if 2)
+(if 2 3 4 5)
+;; pause feed
 ;; run command
 
 
